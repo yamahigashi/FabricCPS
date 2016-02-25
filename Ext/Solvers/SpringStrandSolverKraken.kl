@@ -221,7 +221,7 @@ function SpringStrandSolver.solve!(
         }
         this.pinnedOnController( rootMats );
 
-        //this.recalcurateVelocity( dt );
+        //this.recalculateVelocity( dt );
     }
 
     this.solveTransform( pose, strandEnd );

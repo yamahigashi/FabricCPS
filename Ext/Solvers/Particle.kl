@@ -327,7 +327,7 @@ function ParticleSystem.solveVelocityVerlet!( Scalar dt ){
     this.setPositions();
 }
 
-function ParticleSystem.recalcurateVelocity!( Scalar dt ){
+function ParticleSystem.recalculateVelocity!( Scalar dt ){
 
     if (GPU_ENABLE){
         CalculateVelocity_GPU<<< this.size@true >>>(
@@ -390,7 +390,7 @@ operator VerletVelocities_GPU<<<index>>>(
 } 
 
 
-operator CalcurateVelocity<<<index>>>(
+operator CalculateVelocity<<<index>>>(
                                 in Vec3Attribute old_pos,
                                 in Vec3Attribute new_pos,
                                 io Vec3Attribute vel,

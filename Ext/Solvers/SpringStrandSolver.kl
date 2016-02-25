@@ -209,7 +209,7 @@ function SpringStrand.Solve!( io IPose pose, in Mat44 rootControllers[] ){
             }
         }
 
-        this.recalcurateVelocity( this.env.getDeltaTime() );
+        this.recalculateVelocity( this.env.getDeltaTime() );
     }
 
     for ( Index i=0; i < this.numberOfStrands; i++ ) {
