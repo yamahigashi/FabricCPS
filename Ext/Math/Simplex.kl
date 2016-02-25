@@ -1,0 +1,499 @@
+/*
+ * http://stackoverflow.com/questions/18279456/any-simplex-noise-tutorials-or-resources
+*/
+
+/*
+ * A speed-improved simplex noise algorithm for 2D, 3D and 4D in kl.
+ *
+ * Based on example code by Stefan Gustavson (stegu@itn.liu.se).
+ * Optimisations by Peter Eastman (peastman@drizzle.stanford.edu).
+ * Better rank ordering method by Stefan Gustavson in 2012.
+ *
+ * This could be speeded up even further, but it's useful as it is.
+ *
+ * Version 2012-03-09
+ *
+ * This code was placed in the public domain by its original author,
+ * Stefan Gustavson. You may use it as you see fit, but
+ * attribution is appreciated.
+ *
+ */
+
+
+require Math;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+inline function Float32 octaveNoise( Float32 octaves, Float32 persistence, Float32 scale, Float32 x, Float32 y ){
+    Float32 total       = 0.0;
+    Float32 freq        = scale;
+    Float32 amplitude   = 1.0;
+
+    Float32 maxAmplitude = 0.0;
+
+    for( Index i=0; i < octaves; i++ ){
+        total += rawSimplexNoise( x*freq, y*freq ) * amplitude;
+        freq  *= 2.0;
+        maxAmplitude += amplitude;
+        amplitude *= persistence;
+    }
+
+    return total / maxAmplitude;
+}
+
+
+inline function Float32 octaveNoise( Float32 octaves, Float32 persistence, Float32 scale, Float32 x, Float32 y, Float32 z ){
+    Float32 total       = 0.0;
+    Float32 freq        = scale;
+    Float32 amplitude   = 1.0;
+
+    Float32 maxAmplitude = 0.0;
+
+    for( Index i=0; i < octaves; i++ ){
+        total += rawSimplexNoise( x*freq, y*freq, z*freq ) * amplitude;
+        freq  *= 2.0;
+        maxAmplitude += amplitude;
+        amplitude *= persistence;
+    }
+
+    return total / maxAmplitude;
+}
+
+inline function Float32 octaveNoise( Float32 octaves, Float32 persistence, Float32 scale, Float32 x, Float32 y, Float32 z, Float32 w ){
+    Float32 total       = 0.0;
+    Float32 freq        = scale;
+    Float32 amplitude   = 1.0;
+
+    Float32 maxAmplitude = 0.0;
+
+    for( Index i=0; i < octaves; i++ ){
+        total += rawSimplexNoise( x*freq, y*freq, z*freq, w*freq ) * amplitude;
+        freq  *= 2.0;
+        maxAmplitude += amplitude;
+        amplitude *= persistence;
+    }
+
+    return total / maxAmplitude;
+}
+
+
+inline function Float32 scaledOctaveNoise(
+                            Float32 octaves,
+                            Float32 persistence,
+                            Float32 scale,
+                            Float32 loBound,
+                            Float32 hiBound,
+                            Float32 x,
+                            Float32 y ){
+
+    return (
+        octaveNoise( octaves, persistence, scale, x, y )
+        * ( hiBound - loBound ) / 2
+        + ( hiBound + loBound ) / 2
+    );
+}
+
+
+inline function Float32 scaledOctaveNoise(
+                            Float32 octaves,
+                            Float32 persistence,
+                            Float32 scale,
+                            Float32 loBound,
+                            Float32 hiBound,
+                            Float32 x,
+                            Float32 y,
+                            Float32 z ){
+
+    return (
+        octaveNoise( octaves, persistence, scale, x, y, z )
+        * ( hiBound - loBound ) / 2
+        + ( hiBound + loBound ) / 2
+    );
+}
+
+
+inline function Float32 scaledOctaveNoise(
+                            Float32 octaves,
+                            Float32 persistence,
+                            Float32 scale,
+                            Float32 loBound,
+                            Float32 hiBound,
+                            Float32 x,
+                            Float32 y,
+                            Float32 z,
+                            Float32 w ){
+
+    return (
+        octaveNoise( octaves, persistence, scale, x, y, z, w )
+        * ( hiBound - loBound ) / 2
+        + ( hiBound + loBound ) / 2
+    );
+}
+
+/// 2D raw simplex noise
+inline function Float32 rawSimplexNoise( Float32 x, Float32 y ){
+    Float32 n0, n1, n2 = 0.0;
+
+    //Float32 F2 = 0.5f * ( sqrt( 3.0f ) - 1.0f );
+    const Float32 F2 =0.366025403784;
+    Float32 s  = ( x+y ) * F2;
+    Float32 i  = Integer( x + s );
+    Float32 j  = Integer( y + s );
+
+    //Float32 G2 = ( 3.0f - sqrt(3.0f) )/ 6.0f;
+    const Float32 G2 = 0.211324865405;
+    Float32 t  = Float32( i+j ) * G2;
+    Float32 X0 = i - t;
+    Float32 Y0 = j - t;
+
+    Float32 x0 = x - X0;
+    Float32 y0 = y - Y0;
+
+    Integer i1, j1 = 0;
+    if( x0 > y0 ){
+        i1 = 1;
+        j1 = 0;
+    } else {
+        i1 = 0;
+        j1 = 1;
+    }
+
+
+    Float32 x1 = x0 - j1 + G2;
+    Float32 y1 = y0 - j1 + G2;
+    Float32 x2 = x0 - 1.0f + 2.0f * G2;
+    Float32 y2 = y0 - 1.0f + 2.0f * G2;
+
+    Index ii  = Integer(i) & 255;
+    Index jj  = Integer(j) & 255;
+    Index gi0 = perm[ ii      + perm[ jj      ] ] % 12;
+    Index gi1 = perm[ ii + i1 + perm[ jj + j1 ] ] % 12;
+    Index gi2 = perm[ ii +  1 + perm[ jj +  1 ] ] % 12;
+
+    Float32 t0 = 0.5f - x0*x0 - y0*y0;
+    if( t0 < 0 ){
+        n0 = 0.0f;
+    } else {
+        t0 *= t0;
+        n0 = t0 * t0 * dot( Vec3( grad3[ gi0*3 ], grad3[ gi0*3 + 1], grad3[gi0*3 +2 ]), x0, y0 );
+    }
+
+    Float32 t1 = 0.5f - x1*x1 - y1*y1;
+    if( t1 < 0 ){
+        n1 = 0.0f;
+    } else {
+        t1 *= t1;
+        n1 = t1 * t1 * dot( Vec3( grad3[ gi1*3 ], grad3[ gi1*3 + 1], grad3[gi1*3 +2 ]), x1, y1 );
+    }
+
+    Float32 t2 = 0.5f - x2*x2 - y2*y2;
+    if( t2 < 0 ){
+        n2 = 0.0f;
+    } else {
+        t2 *= t2;
+        n2 = t2 * t2 * dot( Vec3( grad3[ gi2*3 ], grad3[ gi2*3 + 1], grad3[gi2*3 +2 ]), x2, y2 );
+    }
+
+    return 70.0f * (n0 + n1 + n2 );
+
+}
+
+
+inline function Float32 rawSimplexNoise( Float32 x, Float32 y, Float32 z ){
+    Float32 n0, n1, n2, n3 = 0.0;
+
+    //Float32 F3 = 1.0f/3.0f;
+    const Float32 F3 = 0.33333333333333333333333333333333f;
+    Float32  s = ( x+y+z ) * F3;
+    Integer  i = Integer( x+s );
+    Integer  j = Integer( y+s );
+    Integer  k = Integer( z+s );
+
+    //Float32 G3 = 1.0f/6.0f;
+    const Float32 G3 = 0.16666666666666666666666666666667f;
+    Float32 tt = Float32( i+j+k ) * G3;
+    Float32 X0 = i - tt;
+    Float32 Y0 = j - tt;
+    Float32 Z0 = k - tt;
+    Float32 x0 = x - X0;
+    Float32 y0 = y - Y0;
+    Float32 z0 = z - Z0;
+
+    Integer i1, j1, k1 = 0;
+    Integer i2, j2, k2 = 0;
+
+    if ( x0 >= y0 ){
+        if( y0 >= z0 ){         // X Y Z order
+            i1 = 1; j1 = 0; k1 = 0;
+            i2 = 1; j2 = 1; k2 = 0;
+        } else if ( x0 >= z0 ){ // X Z Y order
+            i1 = 1; j1 = 0; k1 = 0;
+            i2 = 1; j2 = 0; k2 = 1;
+        } else {                // Z X Y order
+            i1 = 0; j1 = 0; k1 = 1;
+            i2 = 1; j2 = 0; k2 = 1;
+        }
+    } else {
+        if ( y0 < z0 ){         // Z Y X order
+            i1 = 0; j1 = 0; k1 = 1;
+            i2 = 0; j2 = 1; k2 = 1;
+        } else if ( x0 < z0 ){  // Y Z X order
+            i1 = 0; j1 = 1; k1 = 0;
+            i2 = 0; j2 = 1; k2 = 1;
+        } else {                // Y X Z order
+            i1 = 0; j1 = 1; k1 = 0;
+            i2 = 1; j2 = 1; k2 = 0;
+        }
+    }
+
+    Float32 x1 = x0 - i1 + G3;      // Offsets for second corner in (x,y,z) coords
+    Float32 y1 = y0 - j1 + G3;
+    Float32 z1 = z0 - k1 + G3;
+    Float32 x2 = x0 - i2 + 2.0*G3;  // Offsets for third corner in (x,y,z) coords
+    Float32 y2 = y0 - j2 + 2.0*G3;
+    Float32 z2 = z0 - k2 + 2.0*G3;
+    Float32 x3 = x0 - 1.0 + 3.0*G3; // Offsets for last corner in (x,y,z) coords
+    Float32 y3 = y0 - 1.0 + 3.0*G3;
+    Float32 z3 = z0 - 1.0 + 3.0*G3;
+
+    Index ii  = Integer(i) & 255;
+    Index jj  = Integer(j) & 255;
+    Index kk  = Integer(k) & 255;
+    Index gi0 = perm[ ii      + perm[ jj      + perm[kk]       ]] % 12;
+    Index gi1 = perm[ ii + i1 + perm[ jj + j1 + perm[kk+k1]    ]] % 12;
+    Index gi2 = perm[ ii + i2 + perm[ jj + j2 + perm[kk+k2]    ]] % 12;
+    Index gi3 = perm[ ii +  1 + perm[ jj +  1 + perm[kk+1 ]    ]] % 12;
+
+    Float32 t0 = 0.6f - x0*x0 - y0*y0 - z0*z0;
+    if( t0 < 0 ){
+        n0 = 0.0f;
+    } else {
+        t0 *= t0;
+        n0 = t0 * t0 * dot( Vec3( grad3[ gi0*3 ], grad3[ gi0*3 + 1], grad3[gi0*3 +2 ]), x0, y0, z0 );
+    }
+
+    Float32 t1 = 0.6f - x1*x1 - y1*y1 - z1*z1;
+    if( t1 < 0 ){
+        n1 = 0.0f;
+    } else {
+        t1 *= t1;
+        n1 = t1 * t1 * dot( Vec3( grad3[ gi1*3 ], grad3[ gi1*3 + 1], grad3[gi1*3 +2 ]), x1, y1, z1 );
+    }
+
+    Float32 t2 = 0.6f - x2*x2 - y2*y2 - z2*z2;
+    if( t2 < 0 ){
+        n2 = 0.0f;
+    } else {
+        t2 *= t2;
+        n2 = t2 * t2 * dot( Vec3( grad3[ gi2*3 ], grad3[ gi2*3 + 1], grad3[gi2*3 +2 ]), x2, y2, z2 );
+    }
+
+    Float32 t3 = 0.6f - x3*x3 - y3*y3 - z3*z3;
+    if( t3 < 0 ){
+        n3 = 0.0f;
+    } else {
+        t3 *= t3;
+        n3 = t3 * t3 * dot( Vec3( grad3[ gi3*3 ], grad3[ gi3*3 + 1], grad3[gi3*3 +2 ]), x3, y3, z3 );
+    }
+
+    return 32.0f * ( n0 + n1 + n2 + n3 );
+}
+
+inline function Float32 rawSimplexNoise( Float32 x, Float32 y, Float32 z, Float32 w ){
+    Float32 n0, n1, n2, n3, n4 = 0.0;
+
+    //Float32 F4 = (sqrt(5.0f) - 1.0f) /4.0f;
+    const Float32 F4 = 0.309016994375f;
+    // skew (x, y, z, w) space to determine which cell of simplices
+    Float32  s = ( x+y+z+w ) * F4;
+    Integer  i = Integer( x+s );
+    Integer  j = Integer( y+s );
+    Integer  k = Integer( z+s );
+    Integer  l = Integer( w+s );
+
+    //Float32 G4 = (5.0f - sqrt(5.0f)) / 20.0f;
+    const Float32 G4 = 0.138196601125f;
+    Float32  t = Float32( i+j+k+l ) * G4;
+    Float32 X0 = i - t;
+    Float32 Y0 = j - t;
+    Float32 Z0 = k - t;
+    Float32 W0 = l - t;
+    Float32 x0 = x - X0;
+    Float32 y0 = y - Y0;
+    Float32 z0 = z - Z0;
+    Float32 w0 = w - W0;
+
+    Integer c, c1, c2, c3, c4, c5, c6 = 0;
+    if ( x0 > y0 ){ c1 = 32; }
+    if ( x0 > z0 ){ c2 = 16; }
+    if ( y0 > z0 ){ c3 =  8; }
+    if ( x0 > w0 ){ c4 =  4; }
+    if ( y0 > w0 ){ c5 =  2; }
+    if ( z0 > w0 ){ c6 =  1; }
+    c = c1 + c2 + c3 + c4 + c5 + c6;
+
+    Integer i1, j1, k1, l1 = 0;
+    Integer i2, j2, k2, l2 = 0;
+    Integer i3, j3, k3, l3 = 0;
+
+    if ( simplex[ c*4 + 0 ] >= 3 ){ i1 = 1; }else{ i1 = 0; }
+    if ( simplex[ c*4 + 1 ] >= 3 ){ j1 = 1; }else{ j1 = 0; }
+    if ( simplex[ c*4 + 2 ] >= 3 ){ k1 = 1; }else{ k1 = 0; }
+    if ( simplex[ c*4 + 3 ] >= 3 ){ l1 = 1; }else{ l1 = 0; }
+                                                     
+    if ( simplex[ c*4 + 0 ] >= 2 ){ i2 = 1; }else{ i2 = 0; }
+    if ( simplex[ c*4 + 1 ] >= 2 ){ j2 = 1; }else{ j2 = 0; }
+    if ( simplex[ c*4 + 2 ] >= 2 ){ k2 = 1; }else{ k2 = 0; }
+    if ( simplex[ c*4 + 3 ] >= 2 ){ l2 = 1; }else{ l2 = 0; }
+                                                     
+    if ( simplex[ c*4 + 0 ] >= 1 ){ i3 = 1; }else{ i3 = 0; }
+    if ( simplex[ c*4 + 1 ] >= 1 ){ j3 = 1; }else{ j3 = 0; }
+    if ( simplex[ c*4 + 2 ] >= 1 ){ k3 = 1; }else{ k3 = 0; }
+    if ( simplex[ c*4 + 3 ] >= 1 ){ l3 = 1; }else{ l3 = 0; }
+
+    Float32 x1 = x0 - i1  + G4;     // Offsets for second corner in (x,y,z) coords
+    Float32 y1 = y0 - j1  + G4;
+    Float32 z1 = z0 - k1  + G4;
+    Float32 w1 = w0 - l1  + G4;
+
+    Float32 x2 = x0 - i2  + 2.0*G4; // Offsets for third corner in (x,y,z) coords
+    Float32 y2 = y0 - j2  + 2.0*G4;
+    Float32 z2 = z0 - k2  + 2.0*G4;
+    Float32 w2 = w0 - l3  + 2.0*G4;
+
+    Float32 x3 = x0 - i3  + 3.0*G4; // Offsets for third corner in (x,y,z) coords
+    Float32 y3 = y0 - j3  + 3.0*G4;
+    Float32 z3 = z0 - k3  + 3.0*G4;
+    Float32 w3 = w0 - l3  + 3.0*G4;
+
+    Float32 x4 = x0 - 1.0 + 4.0*G4; // Offsets for last corner in (x,y,z) coords
+    Float32 y4 = y0 - 1.0 + 4.0*G4;
+    Float32 z4 = z0 - 1.0 + 4.0*G4;
+    Float32 w4 = w0 - 1.0 + 4.0*G4;
+
+    Index ii  = Integer(i) & 255;
+    Index jj  = Integer(j) & 255;
+    Index kk  = Integer(k) & 255;
+    Index ll  = Integer(l) & 255;
+
+    Index gi0 = perm[ ii      + perm[ jj      + perm[ kk+      perm[ll    ]]]] % 32;
+    Index gi1 = perm[ ii + i1 + perm[ jj +j1  + perm[ kk+ k1+  perm[ll+l1 ]]]] % 32;
+    Index gi2 = perm[ ii + i2 + perm[ jj +j2  + perm[ kk+ k2+  perm[ll+l2 ]]]] % 32;
+    Index gi3 = perm[ ii + i3 + perm[ jj +j3  + perm[ kk+ k3+  perm[ll+l3 ]]]] % 32;
+    Index gi4 = perm[ ii + 1  + perm[ jj +1   + perm[ kk+ 1+   perm[ll+1  ]]]] % 32;
+
+    // calculate the contribution from the five corners
+    Float32 t0 = 0.6f - x0*x0 - y0*y0 - z0*z0 - w0*w0;
+    if( t0 < 0 ){
+        n0 = 0.0f;
+    } else {
+        t0 *= t0;
+        n0 = t0 * t0 * dot( Vec4( grad4[ gi0*4 ], grad4[ gi0*4 + 1], grad4[gi0*4 +2 ], grad4[gi0*4 +3]), x0, y0, z0, w0 );
+    }
+
+    Float32 t1 = 0.6f - x1*x1 - y1*y1 - z1*z1 - w1*w1;
+    if( t1 < 0 ){
+        n1 = 0.0f;
+    } else {
+        t1 *= t1;
+        n1 = t1 * t1 * dot( Vec4( grad4[ gi1*4 ], grad4[ gi1*4 + 1], grad4[gi1*4 +2 ], grad4[gi1*4 +3]), x1, y1, z1, w1 );
+    }
+
+    Float32 t2 = 0.6f - x2*x2 - y2*y2 - z2*z2 - w2*w2;
+    if( t2 < 0 ){
+        n2 = 0.0f;
+    } else {
+        t2 *= t2;
+        n2 = t2 * t2 * dot( Vec4( grad4[ gi2*4 ], grad4[ gi2*4 + 1], grad4[gi2*4 +2 ], grad4[gi2*4 +3]), x2, y2, z2, w2 );
+    }
+
+    Float32 t3 = 0.6f - x3*x3 - y3*y3 - z3*z3 - w3*w3;
+    if( t3 < 0 ){
+        n3 = 0.0f;
+    } else {
+        t3 *= t3;
+        n3 = t3 * t3 * dot( Vec4( grad4[ gi3*4 ], grad4[ gi3*4 + 1], grad4[gi3*4 +2 ], grad4[gi3*4 +3]), x3, y3, z3, w3 );
+    }
+
+    Float32 t4 = 0.6f - x4*x4 - y4*y4 - z4*z4 - w4*w4;
+    if( t4 < 0 ){
+        n4 = 0.0f;
+    } else {
+        t4 *= t4;
+        n4 = t4 * t4 * dot( Vec4( grad4[ gi4*4 ], grad4[ gi4*4 + 1], grad4[gi4*4 +2 ], grad4[gi4*4 +3]), x4, y4, z4, w4 );
+    }
+
+    return 27.0f * ( n0 + n1 + n2 + n3 +n4 );
+}
+
+
+inline function Float32 dot( Vec3 g, Float32 x, Float32 y ){
+    return g.x*x + g.y*y;
+}
+
+inline function Float32 dot( Vec3 g, Float32 x, Float32 y, Float32 z ){
+    return g.x*x + g.y*y + g.z*z;
+}
+
+inline function Float32 dot( Vec4 g, Float32 x, Float32 y, Float32 z, Float32 t ){
+    return g.x*x + g.y*y + g.z*z + g.t*t;
+}
+
+
+/// kl can't treat const[][] array...
+const Integer grad3[] = [
+    1,1,0,    -1,1,0,   1,-1,0,    -1,-1,0,
+    1,0,1,    -1,0,1,   1,0,-1,    -1,0,-1,
+    0,1,1,    0,-1,1,   0,1,-1,    0,-1,-1
+];
+
+const Integer grad4[] = [
+    0,1,1,1,      0,1,1,-1,      0,1,-1,1,      0,1,-1,-1,    
+    0,-1,1,1,     0,-1,1,-1,     0,-1,-1,1,     0,-1,-1,-1,    
+    1,0,1,1,      1,0,1,-1,      1,0,-1,1,      1,0,-1,-1,    
+    -1,0,1,1,     -1,0,1,-1,     -1,0,-1,1,     -1,0,-1,-1,    
+    1,1,0,1,      1,1,0,-1,      1,-1,0,1,      1,-1,0,-1,    
+    -1,1,0,1,     -1,1,0,-1,     -1,-1,0,1,     -1,-1,0,-1,    
+    1,1,1,0,      1,1,-1,0,      1,-1,1,0,      1,-1,-1,0,    
+    -1,1,1,0,     -1,1,-1,0,     -1,-1,1,0,     -1,-1,-1,0
+];
+
+
+const Integer perm[] = [
+    151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,
+    8,99,37,240,21,10,23,190,6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,
+    35,11,32,57,177,33,88,237,149,56,87,174,20,125,136,171,168,68,175,74,165,71,
+    134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,
+    55,46,245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,208,89,
+    18,169,200,196,135,130,116,188,159,86,164,100,109,198,173,186,3,64,52,217,226,
+    250,124,123,5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,
+    189,28,42,223,183,170,213,119,248,152,2,44,154,163,70,221,153,101,155,167,43,
+    172,9,129,22,39,253,19,98,108,110,79,113,224,232,178,185,112,104,218,246,97,
+    228,251,34,242,193,238,210,144,12,191,179,162,241,81,51,145,235,249,14,239,
+    107,49,192,214,31,181,199,106,157,184,84,204,176,115,121,50,45,127,4,150,254,
+    138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180,
+
+    151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,
+    8,99,37,240,21,10,23,190,6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,
+    35,11,32,57,177,33,88,237,149,56,87,174,20,125,136,171,168,68,175,74,165,71,
+    134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,
+    55,46,245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,208,89,
+    18,169,200,196,135,130,116,188,159,86,164,100,109,198,173,186,3,64,52,217,226,
+    250,124,123,5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,
+    189,28,42,223,183,170,213,119,248,152,2,44,154,163,70,221,153,101,155,167,43,
+    172,9,129,22,39,253,19,98,108,110,79,113,224,232,178,185,112,104,218,246,97,
+    228,251,34,242,193,238,210,144,12,191,179,162,241,81,51,145,235,249,14,239,
+    107,49,192,214,31,181,199,106,157,184,84,204,176,115,121,50,45,127,4,150,254,
+    138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
+];
+
+const Integer simplex[] = [
+    0,1,2,3    ,0,1,3,2    ,0,0,0,0    ,0,2,3,1    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,1,2,3,0,
+    0,2,1,3    ,0,0,0,0    ,0,3,1,2    ,0,3,2,1    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,1,3,2,0,
+    0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0,
+    1,2,0,3    ,0,0,0,0    ,1,3,0,2    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,2,3,0,1    ,2,3,1,0,
+    1,0,2,3    ,1,0,3,2    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,2,0,3,1    ,0,0,0,0    ,2,1,3,0,
+    0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0,
+    2,0,1,3    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,3,0,1,2    ,3,0,2,1    ,0,0,0,0    ,3,1,2,0,
+    2,1,0,3    ,0,0,0,0    ,0,0,0,0    ,0,0,0,0    ,3,1,0,2    ,0,0,0,0    ,3,2,0,1    ,3,2,1,0    
+];

@@ -1,0 +1,117 @@
+/*
+*/
+
+require Math;
+
+
+//object DistanceConstraint : IConstraint {
+object DistanceConstraint {
+    Float32 invMass0;
+    Float32 invMass1;
+    Float32 restLength;
+
+    Float32 compressionStiffness;
+    Float32 stretchStiffness;
+};
+
+/// constructor
+function DistanceConstraint(
+                        in Float32 mass0,
+                        in Float32 mass1,
+                        in Float32 length,
+                        in Float32 compressionStiffnes,
+                        in Float32 stretchStiffness,
+
+                        ){
+
+    if( Math_badDivisor( mass0 ) ){
+        setError( "DistanceConstraint: mass0 is Math_badDivisor" );
+        this.invMass0 = 0.0;
+    } else {
+        this.invMass0 = 1.0f / mass0;
+    }
+
+    if( Math_badDivisor( mass1 ) ){
+        setError( "DistanceConstraint: mass1 is Math_badDivisor" );
+        this.invMass1 = 0.0;
+    } else {
+        this.invMass1 = 1.0f / mass1;
+    }
+
+    this.restLength = length;
+}
+
+function DistanceConstraint.setStiffness!( in Float32 comp, in Float32 stretch ){
+    this.compressionStiffness = comp;
+    this.stretchStiffness     = stretch;
+}
+
+function Boolean DistanceConstraint.solve?(
+                                in Vec3 pos0,  in Vec3 pos1,
+                                io Vec3 corr0, io Vec3 corr1 ){
+
+    Float32 wSum = this.invMass0 + this.invMass1;
+    if (wSum == 0.0f){
+		return false;
+    }
+
+	Vec3    n = pos1 - pos0;
+	n.normalize();
+	Float32 d = n.length;
+	
+	Vec3 corr;
+	if (d < restLength){
+		corr = this.compressionStiffness * n * (d - restLength) / wSum;
+    }else{
+		corr = this.stretchStiffness * n * (d - restLength) / wSum;
+    }
+
+	corr0 =  this.invMass0 * corr;
+	corr1 = -this.invMass1 * corr;
+	return true;
+}
+
+
+/*
+function DistanceConstraint.satisfyInternalConstraints!(){
+    SpringStrandSolver_satisfyInternalConstraints<<< this.constrainRefIndex.size@GPU_ENABLE >>>(
+                                    this.simulatedPos,
+                                    this.velocity,
+                                    this.env.getDeltaTime(),
+                                    this.constrainRefIndex,
+                                    this.constrainDistance,
+                                    this.cutOffForceDistance );
+}
+
+operator DistanceConstraint_satisfyInternalConstraints<<<index>>>(
+                                                io Vec3    positions[],
+                                                io Vec3    velocity[],
+                                                in Float32 dt,
+                                                in Index   refs[][],
+                                                in Float32 dist[][],
+                                                in Float32 cutoff
+                                                ){
+
+    for( Index i=0; i < refs[index].size; i++ ){
+        Vec3 dv = positions[index] - positions[ refs[index][i] ];
+        Float32 d1 = dv.length;
+
+        if ( d1 < cutoff ){
+            return;
+        }
+
+        Float32 d2 = 0.0f;
+        if( !isZero( d1 ) ){
+            d2 = 0.5 * (d1 - dist[index][i]) / d1;
+        }
+
+        Vec3 dp = dv * d2;
+        // TODO: ratio by mass
+        positions[ index ]          -= dp * 0.5;
+        positions[ refs[index][i] ] += dp * 0.5;
+        velocity[ index ]           -= dp * 0.5 / dt;
+        velocity[ refs[index][i] ]  += dp * 0.5 / dt;
+    }
+}
+
+*/

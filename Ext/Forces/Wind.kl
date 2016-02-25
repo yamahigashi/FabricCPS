@@ -1,0 +1,60 @@
+require ParticleSystem;
+require Math;
+
+object Wind: IForce, Force {
+
+    Vec3    direction;
+    Float32 power;
+
+    Float32 animationSpeed;
+    Float32 complexity;
+    Float32 turbulence;
+
+};
+
+
+function Wind( Ref<SimEnvironmentInfo> env, Vec3 d, Scalar p ){
+    this.env = env;
+    this.direction = d;
+    this.power     = p;
+
+    this.complexity = 10;
+
+    if(GPU_ENABLE){ this.convertToSVM(); }
+}
+
+
+function Vec3[] Wind.Apply( in Vec3Attribute pos ){
+    Vec3 res[];
+    res.resize( pos.size );
+
+    Scalar windPower = scaledOctaveNoise( 3, 0.1, 1, this.power, 0, this.env.getFrame() / 100, pos.values[0].x / 100 );
+    ApplyWindForce<<< pos.size@false >>>( res, windPower, this.env.getFrame(), pos, this.complexity);
+    return res;
+}
+
+function Vec3[] Wind.Apply( in Vec3 pos[] ){
+    Vec3 res[];
+    res.convertToSVM();
+    res.resize( pos.size );
+
+    Scalar windPower = scaledOctaveNoise( 3, 0.1, 1, this.power, 0, this.env.getFrame() / 100, pos.size );
+    ApplyWindForce_GPU<<< pos.size@GPU_ENABLE >>>( res, windPower, this.env.getFrame(), pos, this.complexity);
+    return res;
+}
+
+operator ApplyWindForce<<< index >>>( io Vec3 res[], in Float32 basePow, in Float32 fc, in Vec3Attribute pos, in Float32 complex ){
+    res[index] = basePow * Vec3(
+        scaledOctaveNoise( 3, 0.5, 1, 1, -1, fc / 100, index/1000 + 1000, abs(pos.values[index].x) / complex ),
+        scaledOctaveNoise( 3, 0.5, 1, 1, -1, fc / 100, index/1000 + 1000, abs(pos.values[index].y) / complex ),
+        scaledOctaveNoise( 3, 0.5, 1, 1, -1, fc / 100, index/1000 + 1000, abs(pos.values[index].z) / complex )
+    );
+}
+operator ApplyWindForce_GPU<<< index >>>( io Vec3 res[], in Float32 basePow, in Float32 fc, in Vec3 pos[], in Float32 complex ){
+    res[index] = basePow * Vec3(
+        scaledOctaveNoise( 3, 0.5, 1, 1, -1, fc / 100, index/1000 + 1000, abs(pos[index].x) / complex ),
+        scaledOctaveNoise( 3, 0.5, 1, 1, -1, fc / 100, index/1000 + 1000, abs(pos[index].y) / complex ),
+        scaledOctaveNoise( 3, 0.5, 1, 1, -1, fc / 100, index/1000 + 1000, abs(pos[index].z) / complex )
+    );
+}
+

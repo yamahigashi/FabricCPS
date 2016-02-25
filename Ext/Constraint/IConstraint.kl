@@ -1,0 +1,12 @@
+/*
+*/
+require Math;
+
+interface IConstraint{
+
+    /// \param corr0 The result accelaration of constrainer
+    /// \param corr1 The result accelaration of constrainee
+    /// return valid or not
+    Boolean solve?( io Vec3 corr0, io Vec3 corr1 );
+}
+

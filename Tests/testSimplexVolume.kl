@@ -1,0 +1,86 @@
+require Math;
+require Characters;
+require FABRIK;
+require ParticleSystem;
+
+require InlineDrawing;
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+const Integer size = 100;
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+function addPoint( io Points points, Integer x, Integer y, Integer z ){
+    points.addPoint( Vec3( x, y, z ));
+}
+
+function drawPoints( io Points points, DrawingHandle handle ){
+
+    GeometryAttributes attributes = points.getOrCreateSizesAttribute();
+    InlineDrawing draw = handle.getDrawing();
+    InlineShader shader = draw.registerShader(OGLFlatShader());
+    InlineShader surfaceShader = draw.registerShader(OGLSurfaceShader());
+    InlineMaterial mat  = shader.getOrCreateMaterial('mat');
+    InlineMaterial pointsMaterial = shader.getOrCreateMaterial("points");
+    pointsMaterial.setUniform('u_color', Color(1.0, 0.0, 0.0));
+
+    InlineTransform transform = handle.getRootTransform().getChild('test');
+
+    // update points
+    Index i=0;
+        for (Index x=0; x < size; x++ ){
+            for( Index y=0; y < size; y++ ){
+                for( Index z=0; z < size; z++){
+                    //addPoint( points, x, y, z );
+                }
+            }
+        }
+    points.incrementPositionsVersion();
+
+}
+
+
+operator entry(){
+
+    DrawingHandle handle();
+    Points points();
+
+
+    InlineTransform transform = handle.getRootTransform().getChild('test');
+    InlineDrawing draw = handle.getDrawing();
+    InlineShader shader = draw.registerShader(OGLFlatShader());
+    InlineShader surfaceShader = draw.registerShader(OGLSurfaceShader());
+    InlineMaterial mat  = shader.getOrCreateMaterial('mat');
+    InlineMaterial pointsMaterial = shader.getOrCreateMaterial("points");
+    pointsMaterial.setUniform('u_color', Color(1.0, 0.0, 0.0));
+
+    if ( transform == null ){
+        transform = StaticInlineTransform( 'test', Xfo() );
+
+
+        points.clear();
+        handle.getRootTransform().addChild( transform );
+        InlineShape shape = draw.registerShape( InlinePointsShape( 'test', points));
+        InlineInstance instance = mat.addInstance(InlineInstance( 'test', transform, shape, pointsMaterial));
+
+        for (Index x=0; x < size; x++ ){
+            for( Index y=0; y < size; y++ ){
+                for( Index z=0; z < size; z++){
+                    addPoint( points, x, y, z );
+                }
+            }
+        }
+    }
+
+    drawPoints( points, handle );
+
+    //////////////////////////////////
+    // Generate a chain of bones with a random shape.
+
+    //Skeleton skeleton = Skeleton();
+
+}
+
+

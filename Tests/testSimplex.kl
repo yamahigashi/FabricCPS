@@ -1,0 +1,89 @@
+require Math;
+require FabricStatistics;
+require ParticleSystem;
+
+function Float32[] testSimplex3d( Index iterations ){
+    AutoProfilingEvent p(FUNC);//We use the 'FUNC' built-in KL constant (name of current function)
+
+    Float32 res[];
+    res.resize( iterations * iterations * iterations );
+
+    for( Index h=0; h < iterations; h++ ){
+        for( Index i=0; i < iterations; i ++ ){
+            for( Index j=0; j < iterations; j ++ ){
+                res.push( octaveNoise(1, 0.5, 1, h, i, j) );
+                //res.push( rawSimplexNoise(h, i, j) );
+            }
+        }
+    }
+    return res;
+}
+
+function Float32[] testPerlin3d( Index iterations ){
+    AutoProfilingEvent p(FUNC);//We use the 'FUNC' built-in KL constant (name of current function)
+    Float32 res[];
+    res.resize( iterations * iterations * iterations );
+
+    for( Index h=0; h < iterations; h++ ){
+        for( Index i=0; i < iterations; i ++ ){
+            for( Index j=0; j < iterations; j ++ ){
+                res.push( perlinNoise(h, i, j) );
+            }
+        }
+    }
+    return res;
+}
+
+function Float32[] testSimplex3dGPU( Index iterations, Boolean onGPU ){
+    AutoProfilingEvent p(FUNC);//We use the 'FUNC' built-in KL constant (name of current function)
+
+    Float32 res[];
+    if( onGPU ){
+        res.convertToGPU();
+    }
+    res.resize( iterations * iterations * iterations );
+
+    t<<< iterations@onGPU >>>( iterations, res );
+    return res;
+}
+
+
+operator t<<<j>>>(Index iterations, io Float32 res[] ){
+    Index h = 32;
+    for (Index i=0; i < iterations; i++ ){
+        res[ h*100*100 + i*100 + j ] = octaveNoise( 1, 0.5, 1, h/10, i/10, j/10);
+    }
+}
+
+
+
+operator entry(){
+    Integer iterations = 100;
+    Float32 res[];
+    Float32 res2[];
+
+    /*
+    report( "test simplex 3d noise start" );
+    StartFabricProfiling();
+    res = testSimplex3d( iterations );
+    StopFabricProfiling();
+    report( GetProfilingReport() );
+    */
+
+    res2.convertToGPU();
+    report( "test perlin 3d on gpu noise start" );
+    StartFabricProfiling();
+    //res2= testPerlin3d( iterations );
+    res2 = testSimplex3dGPU( iterations, true );
+    StopFabricProfiling();
+    report( GetProfilingReport() );
+
+    report( "test perlin 3d noise start" );
+    res2.convertToCPU();
+    StartFabricProfiling();
+    //res2= testPerlin3d( iterations );
+    res2 = testSimplex3dGPU( iterations, false );
+    StopFabricProfiling();
+    report( GetProfilingReport() );
+
+}

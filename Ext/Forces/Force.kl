@@ -1,0 +1,10 @@
+require ParticleSystem;
+require Math;
+
+object Force {
+    Ref<SimEnvironmentInfo> env;
+};
+
+
+function Force.UpdateFrame!( in Scalar fc ){
+}
