@@ -1,0 +1,27 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver, ParticleSystem\n"
+    },
+  "title" : "PostConstruct",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "805B731F199F0064F97412226BEA0E5B",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.postConstruct();
+}
+"
+  }

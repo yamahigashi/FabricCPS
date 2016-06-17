@@ -1,0 +1,28 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Util/Versioned.html",
+    "uiTooltip" : "Supported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n"
+    },
+  "title" : "IncrementStructureVersion",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "Util" : "*"
+    },
+  "presetGUID" : "888449FB964EB21BAD83887C598CB527",
+  "code" : "require Util;
+
+dfgEntry {
+  this.incrementStructureVersion();
+}
+"
+  }

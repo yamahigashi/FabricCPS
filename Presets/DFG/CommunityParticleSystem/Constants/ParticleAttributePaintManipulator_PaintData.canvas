@@ -1,0 +1,24 @@
+// Created by kl2dfg (processStructConstant)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiAlwaysShowDaisyChainPorts" : "true"
+    },
+  "title" : "ParticleAttributePaintManipulator_PaintData",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "value",
+      "execPortType" : "In",
+      "typeSpec" : "ParticleAttributePaintManipulator_PaintData"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "6C5453DBB6FE1E66FAE8C3A8B3A9DC14",
+  "code" : "dfgEntry {
+}
+"
+  }

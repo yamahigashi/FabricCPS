@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Add a new target geometry to the paint manipulator.\n\nSupported types:\n  this: ParticlePaintManipulator, ParticleAttributePaintManipulator, ParticleManipulator\n  instance: InlineInstance\n"
+    },
+  "title" : "AddTargetGeometry",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "instance",
+      "execPortType" : "In",
+      "typeSpec" : "InlineInstance"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "F358407B39DB893CA82D43C0E650EB5F",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.addTargetGeometry(instance);
+}
+"
+  }

@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Returns a string to use in the undo list\n\nSupported types:\n  this: ParticleAttributePaintCommand\n  result: String\n"
+    },
+  "title" : "GetDesc",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "ParticleAttributePaintCommand"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "String"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "B939B2231ABB605BC174DC78617DEEA3",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  result = this.getDesc();
+}
+"
+  }

@@ -1,0 +1,62 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  env: Ref<SimEnvironmentInfo>\n  basePose: Vec3[]\n  callee: SpringStrandSolver\n  pow: Float32\n  result: Spring\n"
+    },
+  "title" : "Spring",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "env",
+      "execPortType" : "In",
+      "typeSpec" : "SimEnvironmentInfo"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "basePose",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "callee",
+      "execPortType" : "In",
+      "typeSpec" : "SpringStrandSolver"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "pow",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Spring"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "92BA6EA5392B5DF9F4D6736389F4FFA7",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  Ref<SimEnvironmentInfo> env_ref = env;
+  result = Spring(env_ref, basePose, callee, pow);
+}
+"
+  }

@@ -1,0 +1,47 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: SpringStrand\n  pose: IPose\n  param2: Mat44[], Vec3\n"
+    },
+  "title" : "Solve",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "pose",
+      "execPortType" : "IO",
+      "typeSpec" : "IPose"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "param2",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE_PARAM_2$"
+      }
+    ],
+  "extDeps" : {
+    "FABRIK" : "*"
+    },
+  "presetGUID" : "FF8FA239E37E14347809BAB9636EFF33",
+  "priorPortNameMap" : {
+    "effectorPosition" : 2,
+    "effector_position" : 2,
+    "effectors" : 2,
+    "rootControllers" : 2
+    },
+  "code" : "require FABRIK;
+
+dfgEntry {
+  this.Solve(pose, param2);
+}
+"
+  }

@@ -1,0 +1,44 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  points: Points\n  attribute: ScalarAttribute\n  result: ParticleAttributePaintManipulator_PaintData\n"
+    },
+  "title" : "ParticleAttributePaintManipulator_PaintData",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "points",
+      "execPortType" : "In",
+      "typeSpec" : "Points"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "attribute",
+      "execPortType" : "In",
+      "typeSpec" : "ScalarAttribute"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "ParticleAttributePaintManipulator_PaintData"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "A2BB08D9C4474D38EED18A4C50C5B10A",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  result = ParticleAttributePaintManipulator_PaintData(points, attribute);
+}
+"
+  }

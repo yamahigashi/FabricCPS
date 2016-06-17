@@ -1,0 +1,46 @@
+/*
+*/
+require Math;
+require ParticleSystem;
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+object SimpleParticleSolver : ParticleSystem {
+  Boolean drawDebug;
+  Boolean ready;
+};
+
+
+// Default constructor
+function SimpleParticleSolver(
+                  in Xfo emitPoints,
+                  io SimpleParticleSolver solver
+){
+
+  // if( !solver.ready ){}
+
+  // call basetype constructor
+  this.ctor();
+
+  this.drawDebug = false;
+  this.ready = false;
+
+}
+
+// Default constructor
+function SimpleParticleSolver(
+                  in Points points,
+                  io SimpleParticleSolver solver
+){
+
+  // if( !solver.ready ){}
+
+  // call basetype constructor
+  this.ctor();
+
+  this.drawDebug = false;
+  this.ready = false;
+
+}

@@ -1,0 +1,40 @@
+require ParticleSystem;
+require Math;
+
+object Gravity: IForce, Force {
+    Vec3 g;
+};
+
+
+function Gravity( Ref<SimEnvironmentInfo> env ){
+    this.env = env;
+    this.g = Vec3( 0, -9.8, 0 );
+}
+
+function Gravity(  Ref<SimEnvironmentInfo> env, Vec3 g_ ){
+    this.env = env;
+    this.g = g_;
+}
+
+
+function Vec3[] Gravity.Apply( in Vec3 pos[] ){
+    Vec3 res[];
+    res.convertToSVM();
+    res.resize( pos.size() );
+
+    ApplyGravityForce<<< pos.size() >>>( res, this.g );
+    return res;
+}
+
+function Vec3[] Gravity.Apply( in Vec3Attribute pos ){
+    Vec3 res[];
+    res.resize( pos.size() );
+
+    ApplyGravityForce<<< pos.size() >>>( res, this.g );
+    return res;
+}
+
+
+operator ApplyGravityForce<<< index >>>( io Vec3[] res, in Vec3 g ){
+    res[index] = g;
+}

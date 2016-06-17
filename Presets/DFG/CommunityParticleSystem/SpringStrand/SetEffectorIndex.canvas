@@ -1,0 +1,37 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: SpringStrand\n  id: Index\n"
+    },
+  "title" : "SetEffectorIndex",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "SpringStrand"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "id",
+      "execPortType" : "IO",
+      "typeSpec" : "Index"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "6938F665275C74697C0C44232FEE3651",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.SetEffectorIndex(id);
+}
+"
+  }

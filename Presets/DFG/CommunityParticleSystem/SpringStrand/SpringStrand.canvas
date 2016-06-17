@@ -1,0 +1,52 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  skeleton: Ref<Skeleton>\n  handle: DrawingHandle\n  boneNames: String[][]\n  result: SpringStrand\n"
+    },
+  "title" : "SpringStrand",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "skeleton",
+      "execPortType" : "In",
+      "typeSpec" : "Skeleton"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "handle",
+      "execPortType" : "IO",
+      "typeSpec" : "DrawingHandle"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "boneNames",
+      "execPortType" : "In",
+      "typeSpec" : "String[][]"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "SpringStrand"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "9AA66930E1E90F3FEE453D992F539E0B",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  Ref<Skeleton> skeleton_ref = skeleton;
+  result = SpringStrand(skeleton_ref, handle, boneNames);
+}
+"
+  }

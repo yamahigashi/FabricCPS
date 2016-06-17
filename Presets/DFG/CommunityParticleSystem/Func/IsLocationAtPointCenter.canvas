@@ -1,0 +1,42 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Returns 'true' if the point location is defined at point's center.\nSee :kl-ref:`Points.getLocationBoundingSphereCoordinate` for more details relatively to sized points' GeometryLocation positions.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  location: GeometryLocation\n  result: Boolean\n"
+    },
+  "title" : "IsLocationAtPointCenter",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "location",
+      "execPortType" : "In",
+      "typeSpec" : "GeometryLocation"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Boolean"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "BC530832052760B09C2125E36F89F190",
+  "code" : "require Geometry;
+
+dfgEntry {
+  result = this.isLocationAtPointCenter(location);
+}
+"
+  }

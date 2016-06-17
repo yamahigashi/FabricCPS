@@ -1,0 +1,27 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "debug draw\n\nSupported types:\n  this: SpringStrand, SpringStrandSolver\n"
+    },
+  "title" : "DrawSolver",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "CF16C0CBAAB240529ADDB35CC1ED07AE",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.DrawSolver();
+}
+"
+  }

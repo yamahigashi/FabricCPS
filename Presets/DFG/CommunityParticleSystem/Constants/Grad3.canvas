@@ -1,0 +1,24 @@
+// Created by kl2dfg (processConstant)
+{
+  "objectType" : "Func",
+  "title" : "Grad3",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "value",
+      "execPortType" : "Out",
+      "typeSpec" : "Integer"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "AB02091184D8FFADE19A34F9A4F4CDEE",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  value = grad3;
+}
+"
+  }

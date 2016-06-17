@@ -1,0 +1,782 @@
+/*
+*/
+require Math;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+const Boolean GPU_ENABLE = false;
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+object SimEnvironmentInfo {
+    private Float32  startFrame;
+    private Float32  currTime;
+    private Float32  prevTime;
+    private Float32  deltaTime;
+    private Float32  frameRate;  // fps
+};
+
+function SimEnvironmentInfo(){
+    this.startFrame = 0;
+    this.prevTime   = this.startFrame;
+    this.currTime   = this.startFrame;
+    this.deltaTime  = 0;
+    this.frameRate  = 60;
+}
+
+function SimEnvironmentInfo.UpdateFrame!( in Scalar t ){
+    this.prevTime  = this.currTime;
+    this.currTime  = t;
+    this.deltaTime = this.currTime - this.prevTime;
+}
+
+function Float32 SimEnvironmentInfo.getDeltaTime(){
+    return this.deltaTime;
+}
+
+function Float32 SimEnvironmentInfo.getFrame(){
+    return this.currTime;
+}
+
+function Boolean SimEnvironmentInfo.isStartFrame(){
+    return this.startFrame == this.currTime;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+object ParticleConstraint {
+    Index         refIndex;
+    Scalar        distance;
+};
+
+function ParticleConstraint( Index id, Scalar dist ){
+    this.refIndex = id;
+    this.distance = dist;
+}
+
+const Index IntegrationMethodVelocityVerlet = 0;
+const Index IntegrationMethodBasicVerlet    = 1;
+
+
+/// The ParticleSystem basetype, do not call this directry.
+/// Use derived type or implement its behaviour.
+/// \internal
+object ParticleSystem: Points {
+    Index         integrateMethod;
+
+    // simulate internal use
+    Vec3 simulatedPos[];
+    Vec3 velocity[];
+    Vec3 lastPos[];
+
+    // initial state
+    Vec3 initial_position[];
+    Vec3 initial_velocity[];
+    Vec3 initial_lastPos[];
+
+    // simulate parameters
+    ScalarAttribute masses;
+    ScalarAttribute friction;
+    ScalarAttribute dynamicFriction;
+    Vec3Attribute   collisionNormal;
+
+    SimEnvironmentInfo env;
+
+    //ParticleConstraint constraints[][];
+    Index         constrainRefIndex[][];  // avoid object on gpu...
+    Float32       constrainDistance[][];  // avoid object on gpu...
+
+    Scalar        cutOffForceDistance;
+
+    IForce        forces[];
+
+    PolygonMesh   collisionMeshs[];
+};
+
+
+//* CAUTION: MUST CALL from derived type manually !!!
+///  \dfgPresetOmit
+protected function ParticleSystem.ctor!(){
+
+    this.initializeAttributes();
+    this.env = SimEnvironmentInfo();
+    this.collisionMeshs.resize( 0 );
+    this.cutOffForceDistance = 0.001;
+}
+
+/// Set initial position of particles
+///  \dfgPresetOmit
+protected function ParticleSystem.setInitialPosition!( Vec3 pos[] ){
+
+    this.simulatedPos.resize( pos.size() );
+    this.velocity.resize( pos.size() );
+    this.lastPos.resize( pos.size() );
+
+    this.initial_position.resize( pos.size() );
+    this.initial_velocity.resize( pos.size() );
+    this.initial_lastPos.resize( pos.size() );
+
+    for( Index i=0; i < this.size(); i++ ){
+        this.simulatedPos[i] = this.getPosition(i);
+        this.velocity[i]    = Vec3();
+        this.lastPos[i]     = this.getPosition(i);
+
+        this.initial_position[i] = this.getPosition(i);
+        this.initial_velocity[i] = Vec3();
+        this.initial_lastPos[i]  = this.getPosition(i);
+
+        this.friction.values[i] = 0.3;
+        this.dynamicFriction.values[i] = 1.0;
+        this.collisionNormal.values[i] = Vec3();
+    }
+    //this.constraints.resize( pos.size() );
+    this.constrainRefIndex.resize( pos.size() );
+    this.constrainDistance.resize( pos.size() );
+
+}
+
+//* CAUTION: MUST CALL from derived type manually !!!
+///  \dfgPresetOmit
+protected function ParticleSystem.ctor!( Vec3 pos[] ){
+
+    if(GPU_ENABLE){
+        //this.convertToSVM();
+    }
+
+    this.initializeAttributes();
+    this.env = SimEnvironmentInfo();
+    this.collisionMeshs.resize( 0 );
+    //this.constraints.resize( pos.size() );
+    this.constrainRefIndex.resize( pos.size() );
+    this.constrainDistance.resize( pos.size() );
+
+    for( Index i=0; i < this.size(); i++ ){
+        this.simulatedPos[i] = this.getPosition(i);
+        this.velocity[i]    = Vec3();
+        this.lastPos[i]     = this.getPosition(i);
+
+        this.initial_position[i] = this.getPosition(i);
+        this.initial_velocity[i] = Vec3();
+        this.initial_lastPos[i]  = this.getPosition(i);
+
+        this.friction.values[i] = 0.3;
+        this.dynamicFriction.values[i] = 1.0;
+        this.collisionNormal.values[i] = Vec3();
+    }
+
+    this.cutOffForceDistance = 0.001;
+}
+//*/
+
+/// \internal
+function ParticleSystem.initializeAttributes!(){
+    Ref<GeometryAttributes> attributes = this.getAttributes();
+    if (GPU_ENABLE){
+        attributes.convertToSVM();
+    }
+
+    // simulate internal use
+    //this.simulatedPos     = attributes.getOrCreateVec3Attribute("simulatedPos");
+    //this.velocity         = attributes.getOrCreateVec3Attribute("velocity");
+    //this.lastPos          = attributes.getOrCreateVec3Attribute("lastPos");
+
+    // initial sta
+    //this.initial_position = attributes.getOrCreateVec3Attribute("initial_position");
+    //this.initial_velocity = attributes.getOrCreateVec3Attribute("initial_velocity");
+    //this.initial_lastPos  = attributes.getOrCreateVec3Attribute("initial_lastPos");
+
+    // simulate parameters
+    this.masses           = attributes.getOrCreateScalarAttribute("masses");
+    this.friction         = attributes.getOrCreateScalarAttribute("friction");
+    this.dynamicFriction  = attributes.getOrCreateScalarAttribute("dynamicFriction");
+    this.collisionNormal  = attributes.getOrCreateVec3Attribute("collisionNormal");
+
+    // sizes
+    this.defaultPointSize = 0.33;
+}
+
+
+/// \internal
+function ParticleSystem.postConstruct!(){
+    if (GPU_ENABLE){
+        //this.changeMemoryToGPU();
+        this.changeMemoryToSVM();
+    }
+}
+
+
+// change memory backing
+///  \dfgPresetOmit
+function ParticleSystem.changeMemoryToSVM(){
+
+    Ref<GeometryAttributes> attributes = this.getAttributes();
+    // Iterate over the attributes
+    GeometryAttributesIterator iter = attributes.getAttributesIterator();
+    Ref<GeometryAttribute> attribute = null;
+    while( attribute = iter.getNext() ){
+        switch(attribute.type()){
+        case "Vec3Attribute":
+            Ref<Vec3Attribute> v3a = attributes.getAttribute( attribute.getName() );
+            v3a.values.convertToSVM();
+            break;
+        case "ScalarAttribute":
+            Ref<ScalarAttribute> sca = attributes.getAttribute( attribute.getName() );
+            sca.values.convertToSVM();
+            break;
+        }
+        attribute.convertToSVM();
+    }
+    //this.constraints.convertToSVM();
+    this.constrainRefIndex.convertToSVM();
+    this.constrainDistance.convertToSVM();
+}
+
+///  \dfgPresetOmit
+function ParticleSystem.changeMemoryToGPU(){
+
+    Ref<GeometryAttributes> attributes = this.getAttributes();
+
+    // Iterate over the attributes
+    GeometryAttributesIterator iter = attributes.getAttributesIterator();
+    Ref<GeometryAttribute> attribute = null;
+    while( attribute = iter.getNext() ){
+        if( attribute.getName() == "positions" ){ continue; }  // positions must svm
+        switch(attribute.type()){
+            case "Vec3Attribute":
+                Ref<Vec3Attribute> v3a = attributes.getAttribute( attribute.getName() );
+                v3a.values.convertToGPU();
+                break;
+            case "ScalarAttribute":
+                Ref<ScalarAttribute> sca = attributes.getAttribute( attribute.getName() );
+                sca.values.convertToGPU();
+                break;
+        }
+        report( attribute.getName() );
+        //attribute.convertToGPU();
+    }
+
+    //this.constraints.convertToGPU();
+    this.constrainRefIndex.convertToGPU();
+    this.constrainDistance.convertToGPU();
+    Ref<Vec3Attribute> positions = attributes.getAttribute( "positions" );
+    positions.convertToGPU();
+    positions.values.convertToGPU();
+}
+
+
+///  \dfgPresetOmit
+function ParticleSystem.changeMemoryToCPU(){
+
+    Ref<GeometryAttributes> attributes = this.getAttributes();
+    // Iterate over the attributes
+    GeometryAttributesIterator iter = attributes.getAttributesIterator();
+    Ref<GeometryAttribute> attribute = null;
+    while( attribute = iter.getNext() ){
+        if( attribute.getName() == "positions" ){ continue; }  // positions must svm
+
+        switch(attribute.type()){
+        case "Vec3Attribute":
+            Ref<Vec3Attribute> v3a = attributes.getAttribute( attribute.getName() );
+            v3a.values.convertToCPU();
+            break;
+        case "ScalarAttribute":
+            Ref<ScalarAttribute> sca = attributes.getAttribute( attribute.getName() );
+            sca.values.convertToCPU();
+            break;
+        }
+        attribute.convertToCPU();
+    }
+}
+
+
+function ParticleSystem.UpdateFrame!( in Scalar fc ){
+    this.env.UpdateFrame( fc );
+}
+
+function ParticleSystem.AddCollision!( io PolygonMesh mesh ){
+    mesh.recomputePointNormals();
+    this.collisionMeshs.push( mesh );
+}
+
+
+function ParticleSystem.UpdateMethod!( in Integer id ){
+    this.integrateMethod = id;
+}
+
+
+function ParticleSystem.ResetToReferencePose!(){
+    this.simulatedPos = this.initial_position.clone();
+    this.velocity     = this.initial_velocity.clone();
+    this.lastPos      = this.initial_lastPos.clone();
+
+    this.setPositions();
+}
+
+
+function ParticleSystem.solveVelocityVerlet!( Scalar dt ){
+
+    // Vec3Attribute
+    this.lastPos = this.simulatedPos.clone();
+    Vec3 acc1[]  = this.calcAccel( this.simulatedPos );
+    Vec3 p2_position[] = this.simulatedPos.clone();
+    Vec3 p2_velocity[] = this.velocity.clone();
+
+    if( GPU_ENABLE ){
+        VerletPositions_GPU<<< this.size()@true >>>( this.velocity, acc1, p2_position, dt );
+        Vec3 acc2[] = this.calcAccel( p2_position );
+        VerletVelocities_GPU<<< this.size()@true >>>( acc1, acc2, p2_velocity, dt );
+
+    } else {
+        VerletPositions_GPU<<< this.size()@false >>>( this.velocity, acc1, p2_position, dt );
+        Vec3 acc2[] = this.calcAccel( p2_position );
+        VerletVelocities_GPU<<< this.size()@false >>>( acc1, acc2, p2_velocity, dt );
+    }
+
+    this.simulatedPos = p2_position;
+    this.velocity     = p2_velocity;
+
+    this.setPositions();
+}
+
+function ParticleSystem.recalculateVelocity!( Scalar dt ){
+
+    if (GPU_ENABLE){
+        CalculateVelocity_GPU<<< this.size()@true >>>(
+                        this.lastPos,
+                        this.simulatedPos,
+                        this.velocity,
+                        this.collisionNormal.values,
+                        this.dynamicFriction.values,
+                        dt
+        );
+    } else {
+        CalculateVelocity_GPU<<< this.size()@false>>>(
+                        this.lastPos,
+                        this.simulatedPos,
+                        this.velocity,
+                        this.collisionNormal.values,
+                        this.dynamicFriction.values,
+                        dt
+        );
+    }
+}
+
+
+///
+operator VerletPositions<<<index>>>(
+                                in Vec3Attribute vel,
+                                in Vec3 acc[],
+                                io Vec3Attribute pos,
+                                in Scalar dt
+                            ){
+
+    pos.values[index] += dt*vel.values[index] + dt*dt/2.0*acc[index];
+} 
+operator VerletPositions_GPU<<<index>>>(
+                                in Vec3 vel[],
+                                in Vec3 acc[],
+                                io Vec3 pos[],
+                                in Scalar dt
+                            ){
+
+    pos[index] += dt*vel[index] + dt*dt/2.0*acc[index];
+} 
+
+///
+operator VerletVelocities<<<index>>>(
+                                in Vec3 old_acc[],
+                                in Vec3 new_acc[],
+                                io Vec3Attribute vel,
+                                in Scalar dt
+                            ){
+    vel.values[index] += dt / 2.0 * (old_acc[index] + new_acc[index]);
+} 
+operator VerletVelocities_GPU<<<index>>>(
+                                in Vec3 old_acc[],
+                                in Vec3 new_acc[],
+                                io Vec3 vel[],
+                                in Scalar dt
+                            ){
+    vel[index] += dt / 2.0 * (old_acc[index] + new_acc[index]);
+} 
+
+
+operator CalculateVelocity<<<index>>>(
+                                in Vec3Attribute old_pos,
+                                in Vec3Attribute new_pos,
+                                io Vec3Attribute vel,
+                                in Vec3Attribute norm,
+                                in ScalarAttribute friction,
+                                in Scalar dt
+                            ){
+    //vel.values[index] = ( new_pos.values[index] - old_pos.values[index] ) / dt;
+    Vec3 v = new_pos.values[index] - old_pos.values[index];
+    Vec3 n = norm.values[index];
+    Vec3 d = Vec3();
+    //*
+    // vector projection, get the velocity perpendicular to this segment
+    Vec3 proj = v.dot( n ) * n;
+
+    //内積とベクトル長さを使ってcosθを求める
+    Float32 cos_theta = n.dot(v) / ( n.length() * v.length() );
+
+    //cosθからθを求める
+    Float32 theta = acos( cos_theta );
+    // */
+
+    if( n.length() > 0 && friction.values[index] < 1.0 ){
+        //d = ( v - n * v.dot( n )) * friction.values[index];
+        d = v.dot( n ) * n * friction.values[index];
+    }
+
+    vel.values[index] = ( v + d ) * friction.values[index] / dt;
+} 
+operator CalculateVelocity_GPU<<<index>>>(
+                                in Vec3 old_pos[],
+                                in Vec3 new_pos[],
+                                io Vec3 vel[],
+                                in Vec3 norm[],
+                                in Scalar friction[],
+                                in Scalar dt
+                            ){
+    //vel[index] = ( new_pos[index] - old_pos[index] ) / dt;
+    Vec3 v = new_pos[index] - old_pos[index];
+    Vec3 n = norm[index];
+    Vec3 d = Vec3();
+    //*
+    // vector projection, get the velocity perpendicular to this segment
+    Vec3 proj = v.dot( n ) * n;
+
+    //内積とベクトル長さを使ってcosθを求める
+    Float32 cos_theta = n.dot(v) / ( n.length() * v.length() );
+
+    //cosθからθを求める
+    Float32 theta = acos( cos_theta );
+    // */
+
+    if( n.length() > 0 && friction[index] < 1.0 ){
+        //d = ( v - n * v.dot( n )) * friction[index];
+        d = v.dot( n ) * n * friction[index];
+    }
+
+    vel[index] = ( v + d ) * friction[index] / dt;
+} 
+
+
+function ParticleSystem.solveBasicVerlet!( Scalar dt ){
+
+    Vec3 tempPoint[];
+    if( GPU_ENABLE ){
+        //tempPoint.convertToSVM();
+        tempPoint.convertToGPU();
+    }
+    tempPoint.resize( this.size() );
+
+    Vec3 acc1[] = this.calcAccel( this.simulatedPos );
+    BasicVerlet_GPU<<< this.size()@GPU_ENABLE >>>(
+                this.simulatedPos, this.lastPos, acc1, tempPoint, dt);
+
+    this.setPositions();
+}
+
+
+function ParticleSystem.setPositions!(){
+    Ref<GeometryAttributes> attributes = this.getAttributes();
+    Ref<Vec3Attribute> positions = attributes.getAttribute( "positions" );
+    ParticleSystem_vec3Copy<<< this.size()@GPU_ENABLE >>>( positions.values, this.simulatedPos );
+}
+
+operator ParticleSystem_vec3Copy<<< index >>>( io Vec3 dst[], in Vec3 src[] ){
+    dst[index] = src[index];
+}
+
+operator BasicVerlet<<<index>>>(
+                                io Vec3Attribute pos,
+                                io Vec3Attribute last,
+                                io Vec3 acc[],
+                                io Vec3 tmp[],
+                                in Scalar dt
+){
+        tmp[index] = pos.values[index];
+
+        Vec3 res   = pos.values[index];
+        res -= last.values[index];
+        res += acc[index]*dt*dt;
+
+        pos.values[index] += res;
+        last.values[index] = tmp[index];
+}
+
+operator BasicVerlet_GPU<<<index>>>(
+                                io Vec3 pos[],
+                                io Vec3 last[],
+                                io Vec3 acc[],
+                                io Vec3 tmp[],
+                                in Scalar dt
+){
+        tmp[index] = pos[index];
+
+        Vec3 res   = pos[index];
+        res -= last[index];
+        res += acc[index]*dt*dt;
+
+        pos[index] += res;
+        last[index] = tmp[index];
+}
+
+///  \dfgPresetOmit
+function Vec3[] ParticleSystem.calcAccel( in Vec3 pos[] ){
+    Vec3 res[];
+    if( GPU_ENABLE ){
+        //res.convertToSVM();
+        res.convertToGPU();
+    }
+    res.resize( this.size() );
+
+    this.calcForce( res, pos );
+    ParticleSystem_applyMass<<< res.size()@GPU_ENABLE >>>( res, this.masses.values );
+
+    return res;
+}
+
+///  \dfgPresetOmit
+function Vec3[] ParticleSystem.calcAccel( in Vec3Attribute pos ){
+    Vec3 res[];
+    if( GPU_ENABLE ){
+        //res.convertToSVM();
+        res.convertToGPU();
+    }
+    res.resize( this.size() );
+
+    this.calcForce( res, pos );
+    ParticleSystem_applyMass<<< res.size()@GPU_ENABLE >>>( res, this.masses.values );
+
+    return res;
+}
+
+operator ParticleSystem_applyMass<<<index>>>( io Vec3 res[], in Float32 masses[] ){
+    if( Math_badDivisor( masses[index] ) ){
+        //setError( "badDivisor, masses["+index+"] is " + masses[index] );
+        return;
+    }
+    res[index] /= masses[index];
+}
+
+
+///  \dfgPresetOmit
+function ParticleSystem.calcForce?( io Vec3 res[], in Vec3 pos[] ){
+    Vec3 fs[][];
+
+
+    if( GPU_ENABLE ){
+        fs.resize( this.forces.size() );
+
+        calcForces<<< this.forces.size()@false >>>( fs, this.forces, pos );
+        fs.convertToSVM();
+        synthesisForce_GPU<<< this.size()@true>>>( res, fs, this.dynamicFriction.values );
+        Float32 dtdt = this.env.getDeltaTime() * this.env.getDeltaTime();
+        randomizeForce_GPU<<< this.size()@true >>>( res, dtdt, pos );
+
+    } else {
+        fs.resize( this.forces.size() );
+
+        calcForces<<< this.forces.size()@false >>>( fs, this.forces, pos );
+        synthesisForce<<< this.size()@false >>>( res, fs, this.dynamicFriction );
+
+        Float32 dtdt = this.env.getDeltaTime() * this.env.getDeltaTime();
+        randomizeForce<<< this.size()@false >>>( res, dtdt, pos );
+    }
+}
+
+
+///  \dfgPresetOmit
+function ParticleSystem.calcForce?( io Vec3 res[], in Vec3Attribute pos ){
+    Vec3 fs[][];
+
+
+    if( GPU_ENABLE ){
+        fs.resize( this.forces.size() );
+
+        calcForces<<< this.forces.size()@false >>>( fs, this.forces, pos.values );
+        fs.convertToSVM();
+        synthesisForce_GPU<<< this.size()@true>>>( res, fs, this.dynamicFriction.values );
+        Float32 dtdt = this.env.getDeltaTime() * this.env.getDeltaTime();
+        randomizeForce_GPU<<< this.size()@true >>>( res, dtdt, pos.values );
+
+    } else {
+        fs.resize( this.forces.size() );
+
+        calcForces<<< this.forces.size()@false >>>( fs, this.forces, pos.values );
+        synthesisForce<<< this.size()@false >>>( res, fs, this.dynamicFriction );
+
+        Float32 dtdt = this.env.getDeltaTime() * this.env.getDeltaTime();
+        randomizeForce<<< this.size()@false >>>( res, dtdt, pos.values );
+    }
+}
+
+operator calcForces<<< index >>>( io Vec3 fs[][], in IForce forces[], in Vec3 pos[] ){
+    fs[index] = forces[index].Apply( pos );
+}
+
+//operator calcForces<<< index >>>( io Vec3 fs[][], in IForce forces[], in Vec3Attribute pos ){
+//    fs[index] = forces[index].Apply( pos );
+//}
+
+
+// gpu mem だと 普通の代入もできないのでオペレータ化する
+operator ParticleSystem_calcForceAddVec3<<<index>>>( io Vec3 res[][], in Index i, in Vec3 rgh[] ){
+    res[i] = rgh;
+}
+
+operator synthesisForce<<< index >>>( io Vec3 res[], in Vec3 fs[][], in ScalarAttribute friction ){
+    for( Index i=0; i < fs.size(); i++ ){
+        res[index] += fs[i][index];
+    }
+    res[index] *= friction.values[index];
+}
+operator synthesisForce_GPU<<< index >>>( io Vec3 res[], in Vec3 fs[][], in Scalar friction[] ){
+    for( Index i=0; i < fs.size(); i++ ){
+        res[index] += fs[i][index];
+    }
+    res[index] *= friction[index];
+}
+
+
+operator randomizeForce<<< index >>>( io Vec3 res[], in Float32 dtdt, in Vec3 pos[] ){
+    res[index] = res[index] * scaledOctaveNoise( 3, 0.5, 1, 1, 0, dtdt / 100, abs(pos[index].x) / 100, abs(pos[index].y), abs(pos[index].z) );
+}
+operator randomizeForce_GPU<<< index >>>( io Vec3 res[], in Float32 dtdt, in Vec3 pos[] ){
+    res[index] = res[index] * scaledOctaveNoise( 3, 0.5, 1, 1, 0, dtdt / 100, abs(pos[index].x) / 100, abs(pos[index].y), abs(pos[index].z) );
+}
+
+
+function ParticleSystem.addConstraint!( Index i, ParticleConstraint cons ){
+    //this.constraints[i].push( cons );
+    this.constrainRefIndex[i].push( cons.refIndex );
+    this.constrainDistance[i].push( cons.distance );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+///  \dfgPresetOmit
+function ParticleSystem.UpdateExternalConstraints!(
+                    io PolygonMesh        mesh,
+                    in Scalar             collisionThickness,
+                    in Integer            solverIterations
+){
+
+    GenericValueContainer options = GenericValueContainer();
+    PrepareForSpatialQueries_setSparseGrid(options);
+
+    mesh.prepareForSpatialQueries( this.size(), options );
+    /*
+    this.changeMemoryToGPU();
+    SolveCollisionOnVertex_GPU<<< this.size()@true >>>(
+                mesh, this.simulatedPos.values, this.lastPos.values, this.velocity.values,
+                this.friction.values, this.dynamicFriction.values, this.collisionNormal.values,
+                collisionThickness);
+    this.changeMemoryToCPU();
+    // */
+    //*
+    SolveCollisionOnVertex<<< this.size()@false >>>(
+                mesh, this.simulatedPos, this.lastPos, this.velocity,
+                this.friction, this.dynamicFriction, this.collisionNormal,
+                collisionThickness);
+    // */
+    mesh.removeSpatialQueryAcceleration();
+}
+
+operator SolveCollisionOnVertex<<<index>>>(
+        io PolygonMesh   mesh,
+        io Vec3          position[],
+        in Vec3          lastPos[],
+        io Vec3          velocity[],
+        io ScalarAttribute friction,
+        io ScalarAttribute dynamicFriction,
+        io Vec3Attribute collisionNormal,
+        in Scalar        thick
+){
+
+    Vec3 x  = lastPos[index];
+    Vec3 p  = position[index];
+    Vec3 v  = velocity[index];
+
+    //find intersection with collision mesh
+    Ray ray(x, p-x);
+    Ref<SpatialQuery> query = mesh.beginSpatialQuery();
+    GeometryLocation location = mesh.raycast( ray, false, 0, (p-x).length() + thick );
+
+    if(location.isValid()) {
+        Vec3 q = mesh.getPositionAtLocation( location );
+        Vec3 n = mesh.getNormalAtLocation( location );
+
+        Vec3 diff = q + n*thick - position[index];
+        position[index] = q + n*thick;
+        velocity[index] = velocity[index] + diff;
+        dynamicFriction.values[index] = friction.values[index];
+        collisionNormal.values[index] = n;
+
+    } else {
+
+        location = mesh.getClosest( x, Vec3(1.0, 1.0, 1.0), thick );
+        if( location.isValid() ){
+            dynamicFriction.values[index] = friction.values[index];
+            collisionNormal.values[index] = mesh.getNormalAtLocation( location );
+
+        } else {
+            dynamicFriction.values[index] = 1.0;
+            collisionNormal.values[index] = Vec3();
+        }
+    }
+    mesh.endSpatialQuery( query );
+}
+
+operator SolveCollisionOnVertex_GPU<<<index>>>(
+        io PolygonMesh   mesh,
+        io Vec3 position[],
+        in Vec3 lastPos[],
+        io Vec3 velocity[],
+        io Scalar friction[],
+        io Scalar dynamicFriction[],
+        io Vec3 collisionNormal[],
+        in Scalar        thick
+){
+
+    Vec3 x  = lastPos[index];
+    Vec3 p  = position[index];
+    Vec3 v  = velocity[index];
+
+    //find intersection with collision mesh
+    Ray ray(x, p-x);
+    Ref<SpatialQuery> query = mesh.beginSpatialQuery();
+    GeometryLocation location = mesh.raycast( ray, false, 0, (p-x).length() + thick );
+
+    if(location.isValid()) {
+        Vec3 q = mesh.getPositionAtLocation( location );
+        Vec3 n = mesh.getNormalAtLocation( location );
+
+        Vec3 diff = q + n*thick - position[index];
+        position[index] = q + n*thick;
+        velocity[index] = velocity[index] + diff;
+        dynamicFriction[index] = friction[index];
+        collisionNormal[index] = n;
+
+    } else {
+
+        location = mesh.getClosest( x, Vec3(1.0, 1.0, 1.0), thick );
+        if( location.isValid() ){
+            dynamicFriction[index] = friction[index];
+            collisionNormal[index] = mesh.getNormalAtLocation( location );
+
+        } else {
+            dynamicFriction[index] = 1.0;
+            collisionNormal[index] = Vec3();
+        }
+    }
+    mesh.endSpatialQuery( query );
+}
+
+

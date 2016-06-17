@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: ParticleAttributePaintManipulator_PaintData\n  paintData: ParticleAttributePaintManipulator_PaintData\n"
+    },
+  "title" : "MergeIn",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "ParticleAttributePaintManipulator_PaintData"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "paintData",
+      "execPortType" : "In",
+      "typeSpec" : "ParticleAttributePaintManipulator_PaintData"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "2A672AB0E170C5B99A9AFC8FE306EB43",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.mergeIn(paintData);
+}
+"
+  }

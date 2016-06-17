@@ -1,0 +1,45 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Evaluates the position attribute at a specific location.\nFor a sized particle, the returned position might be a position on its bounding sphere surface when applicable\n(eg: resulting from a :kl-ref:`Points.raycast` or :kl-ref:`Points.getClosest` call).\nSee :kl-ref:`Points.getLocationBoundingSphereCoordinate` for more information.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  location: GeometryLocation\n  result: Vec3\n"
+    },
+  "title" : "GetPositionAtLocation",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "location",
+      "execPortType" : "In",
+      "typeSpec" : "GeometryLocation"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "4C8E7510D99DCB1CEA1D6B36CE619623",
+  "code" : "require Geometry;
+
+dfgEntry {
+  result = this.getPositionAtLocation(location);
+}
+"
+  }

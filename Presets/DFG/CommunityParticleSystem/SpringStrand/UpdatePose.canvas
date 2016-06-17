@@ -1,0 +1,37 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "update the pose\n\nSupported types:\n  this: SpringStrand\n  pose: IPose\n"
+    },
+  "title" : "UpdatePose",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "SpringStrand"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "pose",
+      "execPortType" : "IO",
+      "typeSpec" : "IPose"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "AE2F7F94537CE9961F920027F6E9FA1D",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.UpdatePose(pose);
+}
+"
+  }

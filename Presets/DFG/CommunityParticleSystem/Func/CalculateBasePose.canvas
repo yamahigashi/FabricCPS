@@ -1,0 +1,41 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: SpringStrand, SpringStrandSolver\n  param1: Mat44[]\n"
+    },
+  "title" : "CalculateBasePose",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "param1",
+      "execPortType" : "In",
+      "typeSpec" : "Mat44[]"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "9F8F79B9D947CF2A416CFA4DA23F0A49",
+  "priorPortNameMap" : {
+    "fkcontrols" : 1,
+    "rootControllers" : 1
+    },
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.calculateBasePose(param1);
+}
+"
+  }

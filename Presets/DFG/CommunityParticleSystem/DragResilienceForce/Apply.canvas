@@ -1,0 +1,48 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: Wind, Spring, Gravity, DragResilienceForce\n  param1: Vec3[], Vec3Attribute\n  result: Vec3[]\n"
+    },
+  "title" : "Apply",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "param1",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE_PARAM_1$"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[]"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "9141E77ECCC4EA1F4D9ED21691647B41",
+  "priorPortNameMap" : {
+    "pos" : 1,
+    "positions" : 1
+    },
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  result = this.Apply(param1);
+}
+"
+  }

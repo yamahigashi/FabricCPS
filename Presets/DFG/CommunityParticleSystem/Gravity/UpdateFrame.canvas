@@ -1,0 +1,38 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: SimEnvironmentInfo, SimpleParticleSolver, SpringStrand, SpringStrandSolver, Force, Wind, Spring, Gravity, DragResilienceForce, ParticleSystem\n  param1: Scalar\n"
+    },
+  "title" : "UpdateFrame",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "param1",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "8968822DEABBEEB853DE066F1994BEDD",
+  "priorPortNameMap" : {
+    "fc" : 1,
+    "t" : 1
+    },
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.UpdateFrame(param1);
+}
+"
+  }

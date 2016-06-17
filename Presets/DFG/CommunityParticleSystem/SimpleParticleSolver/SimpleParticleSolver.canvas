@@ -1,0 +1,51 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  param1: Points, Xfo\n  solver: SimpleParticleSolver\n  result: SimpleParticleSolver\n"
+    },
+  "title" : "SimpleParticleSolver",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "param1",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE_PARAM_1$"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "IO",
+      "name" : "solver",
+      "execPortType" : "IO",
+      "typeSpec" : "SimpleParticleSolver"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "SimpleParticleSolver"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "D2AD0547427BA8BB2DE57E646D6882A2",
+  "priorPortNameMap" : {
+    "emitPoints" : 0,
+    "points" : 0
+    },
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  result = SimpleParticleSolver(param1, solver);
+}
+"
+  }

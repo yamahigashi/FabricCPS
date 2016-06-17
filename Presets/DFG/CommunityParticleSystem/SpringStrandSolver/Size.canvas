@@ -1,0 +1,35 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Returns the number of points.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  result: Size\n"
+    },
+  "title" : "Size",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Size"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "D635C4C812C5B85A95C211191C4FA77D",
+  "code" : "require Geometry;
+
+dfgEntry {
+  result = this.size();
+}
+"
+  }

@@ -1,0 +1,41 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Returns true if the target geometry has already been added to the paint manipulator.\n\nSupported types:\n  this: ParticlePaintManipulator, ParticleAttributePaintManipulator, ParticleManipulator\n  instance: InlineInstance\n  result: Boolean\n"
+    },
+  "title" : "HasTargetGeometry",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "instance",
+      "execPortType" : "In",
+      "typeSpec" : "InlineInstance"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Boolean"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "401D77008CB6D88566D5EE19232085CF",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  result = this.hasTargetGeometry(instance);
+}
+"
+  }

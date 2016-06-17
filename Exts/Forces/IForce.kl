@@ -1,0 +1,12 @@
+require ParticleSystem;
+
+
+
+/// \internal
+interface IForce {
+
+    Vec3[] Apply( in Vec3 positions[] );
+    Vec3[] Apply( in Vec3Attribute positions );
+
+    //UpdateFrame!( in Float32 f );
+};

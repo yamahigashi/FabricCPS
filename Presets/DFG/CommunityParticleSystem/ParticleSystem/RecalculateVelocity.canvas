@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver, ParticleSystem\n  dt: Scalar\n"
+    },
+  "title" : "RecalculateVelocity",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "dt",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "F86CD193B3DDF14F7FCD31A7D12A9093",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.recalculateVelocity(dt);
+}
+"
+  }

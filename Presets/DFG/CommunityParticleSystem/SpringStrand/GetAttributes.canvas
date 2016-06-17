@@ -1,0 +1,39 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Returns the associated attribute container, if any.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  result: GeometryAttributes\n"
+    },
+  "title" : "GetAttributes",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "GeometryAttributes"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "A064A015E32A92057A88CD99FD5921E7",
+  "code" : "require Geometry;
+
+dfgEntry {
+  Ref<GeometryAttributes> result_ref = this.getAttributes();
+  result = result_ref;
+}
+"
+  }

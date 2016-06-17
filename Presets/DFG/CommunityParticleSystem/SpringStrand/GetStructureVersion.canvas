@@ -1,0 +1,35 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Returns the version of the geometry structure including the the attribute set (but not attribute values).\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  result: UInt32\n"
+    },
+  "title" : "GetStructureVersion",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "UInt32"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "5BD95AD1FA75B307D33D7A1751F60616",
+  "code" : "require Geometry;
+
+dfgEntry {
+  result = this.getStructureVersion();
+}
+"
+  }

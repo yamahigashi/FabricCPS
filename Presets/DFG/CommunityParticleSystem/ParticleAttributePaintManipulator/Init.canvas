@@ -1,0 +1,27 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Initialize the default values of the ParticlePaintManipulator\n:kl-ref:`ParticlePaintManipulator` within thier constructors.\n\nSupported types:\n  this: ParticlePaintManipulator, ParticleAttributePaintManipulator, ParticleManipulator\n"
+    },
+  "title" : "Init",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "267E3D979B4392CFBF5CAAFC2AA95CC6",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.init();
+}
+"
+  }

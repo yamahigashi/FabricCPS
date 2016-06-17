@@ -1,0 +1,52 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  env: Ref<SimEnvironmentInfo>\n  callee: SpringStrandSolver\n  power: Float32\n  result: DragResilienceForce\n"
+    },
+  "title" : "DragResilienceForce",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "env",
+      "execPortType" : "In",
+      "typeSpec" : "SimEnvironmentInfo"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "callee",
+      "execPortType" : "In",
+      "typeSpec" : "SpringStrandSolver"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "power",
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "DragResilienceForce"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "CD3FF7A231FFDE96ED610D2C86B1435F",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  Ref<SimEnvironmentInfo> env_ref = env;
+  result = DragResilienceForce(env_ref, callee, power);
+}
+"
+  }

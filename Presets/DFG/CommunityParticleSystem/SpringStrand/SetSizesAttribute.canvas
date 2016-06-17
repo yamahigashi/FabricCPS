@@ -1,0 +1,36 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Defines the attribute that will be used for 'setSize' and 'getSize' (see :ref:`pointsizes`)\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  sizesAttribute: Ref<ScalarAttribute>\n"
+    },
+  "title" : "SetSizesAttribute",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "sizesAttribute",
+      "execPortType" : "In",
+      "typeSpec" : "ScalarAttribute"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "D77528727B2C9052F7114E85D88D0655",
+  "code" : "require Geometry;
+
+dfgEntry {
+  Ref<ScalarAttribute> sizesAttribute_ref = sizesAttribute;
+  this.setSizesAttribute(sizesAttribute_ref);
+}
+"
+  }

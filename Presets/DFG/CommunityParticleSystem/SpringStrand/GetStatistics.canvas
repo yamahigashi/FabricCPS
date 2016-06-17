@@ -1,0 +1,35 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/FabricStatistics/StatisticSourceWithAutoRegisterMember.html",
+    "uiTooltip" : "Returns statistics related to this object. The `Name` should be included, but the `Type` will be automatically generated.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  result: StatisticRecord[]\n"
+    },
+  "title" : "GetStatistics",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "StatisticRecord[]"
+      }
+    ],
+  "extDeps" : {
+    "FabricStatistics" : "*"
+    },
+  "presetGUID" : "3B1A0ED348F87387BA8B82E9EBF08C73",
+  "code" : "require FabricStatistics;
+
+dfgEntry {
+  result = this.getStatistics();
+}
+"
+  }

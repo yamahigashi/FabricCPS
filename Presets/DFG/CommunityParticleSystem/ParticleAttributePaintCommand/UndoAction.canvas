@@ -1,0 +1,27 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: ParticleAttributePaintManipulator_PaintData, ParticleAttributePaintCommand\n"
+    },
+  "title" : "UndoAction",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "7D6B362A310A05C435D39CEDE850782A",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.undoAction();
+}
+"
+  }

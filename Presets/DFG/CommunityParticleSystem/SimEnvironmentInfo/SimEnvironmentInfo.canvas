@@ -1,0 +1,27 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  result: SimEnvironmentInfo\n"
+    },
+  "title" : "SimEnvironmentInfo",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "SimEnvironmentInfo"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "A778F777D30D30603862E1FC52E25C8B",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  result = SimEnvironmentInfo();
+}
+"
+  }

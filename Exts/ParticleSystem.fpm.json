@@ -1,0 +1,21 @@
+{
+  "code": [
+    "Forces/IForce.kl",
+    "Math/Simplex.kl",
+
+    "Solvers/Particle.kl",
+    "Solvers/SimpleParticleSolver.kl",
+    "Solvers/SpringStrandSolver.kl",
+    "Solvers/SpringStrandSolverKraken.kl",
+
+    "Forces/Force.kl",
+    "Forces/Wind.kl",
+    "Forces/Spring.kl",
+    "Forces/Gravity.kl",
+    "Forces/DragResilience.kl",
+
+    "Brush/ParticlePaintManipulator.kl",
+    "Brush/ParticleAttributePaintManipulator.kl",
+    "Brush/ParticleManipulator.kl"
+  ]
+}

@@ -1,0 +1,30 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: SpringStrandSolver\n"
+    },
+  "title" : "SetupForcesForDebug",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "SpringStrandSolver"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "AE44F938A460068B97D21507169DB2A8",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.setupForcesForDebug();
+}
+"
+  }

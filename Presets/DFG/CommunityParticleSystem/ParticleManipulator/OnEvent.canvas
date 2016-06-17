@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "The event handler function for the ParticlePaintManipulator\n\nSupported types:\n  this: ParticlePaintManipulator, ParticleAttributePaintManipulator, ParticleManipulator\n  event: Event\n"
+    },
+  "title" : "OnEvent",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "event",
+      "execPortType" : "IO",
+      "typeSpec" : "Event"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "AB5FEF70918CBCAF2124988D65617856",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.onEvent(event);
+}
+"
+  }

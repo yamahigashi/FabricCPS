@@ -1,0 +1,24 @@
+// Created by kl2dfg (processConstant)
+{
+  "objectType" : "Func",
+  "title" : "IntegrationMethodBasicVerlet",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "value",
+      "execPortType" : "Out",
+      "typeSpec" : "Index"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "C3A90D88A749EACA1D5BD49532940EA8",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  value = IntegrationMethodBasicVerlet;
+}
+"
+  }

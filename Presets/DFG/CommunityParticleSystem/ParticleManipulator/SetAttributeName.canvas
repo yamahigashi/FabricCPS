@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: ParticleAttributePaintManipulator, ParticleManipulator\n  attributeName: String\n"
+    },
+  "title" : "SetAttributeName",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "attributeName",
+      "execPortType" : "In",
+      "typeSpec" : "String"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "7314D0B846259324F4D4ACA107BD8CC4",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.setAttributeName(attributeName);
+}
+"
+  }

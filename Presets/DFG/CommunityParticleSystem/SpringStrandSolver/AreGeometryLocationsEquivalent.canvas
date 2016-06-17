@@ -1,0 +1,49 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Returns true if the geometry locations are equal or equivalent for this geometry.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  location0: GeometryLocation\n  location1: GeometryLocation\n  result: Boolean\n"
+    },
+  "title" : "AreGeometryLocationsEquivalent",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "location0",
+      "execPortType" : "In",
+      "typeSpec" : "GeometryLocation"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "location1",
+      "execPortType" : "In",
+      "typeSpec" : "GeometryLocation"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Boolean"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "8BC4510965810646FCE992EB9FE392E0",
+  "code" : "require Geometry;
+
+dfgEntry {
+  result = this.areGeometryLocationsEquivalent(location0, location1);
+}
+"
+  }

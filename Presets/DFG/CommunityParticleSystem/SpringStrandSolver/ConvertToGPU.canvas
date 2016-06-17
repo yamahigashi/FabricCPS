@@ -1,0 +1,28 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Supported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n"
+    },
+  "title" : "ConvertToGPU",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "550289DB5920E5808AA87BD309D43DC9",
+  "code" : "require Geometry;
+
+dfgEntry {
+  this.convertToGPU();
+}
+"
+  }

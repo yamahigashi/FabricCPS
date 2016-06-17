@@ -1,0 +1,83 @@
+require Singletons;
+require InlineDrawing;
+
+////////////////////////////////////////////////////////////////////////////////////////
+require Manipulation;
+//require FilePath;
+
+
+
+
+object ParticleManipulator : ParticleAttributePaintManipulator {
+    public Boolean ready;
+    public Boolean isEnable;
+    //String  hostName;
+    //String  graphName;
+    //Size    updaterIndex;
+    Boolean isClearWhenNonactive;
+
+    ParticleSystem particleSystem;
+
+    //--------buttons section----------
+    //------------ghost section----------
+
+    //-------------------Reference object----------
+
+    //---------------HUD parameters----------------
+};
+
+
+
+function ParticleManipulator(
+            EvalContext context, ParticleSystem particleSystem, DrawingHandle handle ) {
+
+    //this.hostName     = context.host;
+    //this.graphName    = context.graph;
+    //this.updaterIndex = 0;
+
+    this.init();
+    //Attribute masses of type ScalarAttribute
+    //Attribute friction of type ScalarAttribute
+    //Attribute WeightMap of type ScalarAttribute
+    //Attribute stiffness of type ScalarAttribute
+    //Attribute resilience of type ScalarAttribute
+    this.attributeName = "friction";
+    this.particleSystem = particleSystem;
+    //-------------- draw on ParticleSystem's points
+  
+    InlineDrawing   draw     = handle.getDrawing();
+    InlineShader    shader   = draw.registerShader( OGLFlatShader() );
+    //InlineShader    shader = draw.registerShader(OGLSurfaceShader());
+    InlineMaterial  mat      = shader.getOrCreateMaterial( 'mat' );
+    InlineMaterial  pointMat = shader.getOrCreateMaterial( 'points' );
+    InlineTransform t        = handle.getRootTransform().getChild( 'test_particlemanipulator' );
+
+    if( !t ){
+        t = StaticInlineTransform( 'test', Xfo() );
+        handle.getRootTransform().addChild(t);
+        InlineShape shape = draw.registerShape( InlinePointsShape('points', particleSystem) );
+        InlineInstance instance = InlineInstance( 'ParticleManipulator_InlinePoints', t, shape );
+        this.addTargetGeometry( instance );
+    }
+
+}
+
+function ParticleManipulator.onStrokeEnd!( io MouseEvent mouseEvent ){
+    if(this.command.paintData.size() <= 0){
+        return;
+    }
+
+    // Register a command only if painting actually occured.
+    // There should be at least one geometry added to the paint data. 
+    mouseEvent.getHost().addUndoRedoCommand(this.command);
+
+    // update vertex color
+    GeometryAttributes attrs  = this.particleSystem.getAttributes();
+    Ref<ColorAttribute>  c = attrs.getOrCreateColorAttribute( "vertexColors" );
+    Ref<ScalarAttribute> a = attrs.getOrCreateScalarAttribute( this.attributeName );
+
+    for( Index i=0; i < c.values.size(); i++ ){
+        c.values[ i ].r = a.values[i];
+    }
+    c.incrementVersion();
+}

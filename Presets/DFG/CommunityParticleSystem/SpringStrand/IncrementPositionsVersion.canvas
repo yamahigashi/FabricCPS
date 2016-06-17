@@ -1,0 +1,28 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Helper for incrementing the version of the positions attribute after value changes.\nSee :ref:`attributeversioning` for more information.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n"
+    },
+  "title" : "IncrementPositionsVersion",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "422CFF686A2914BB534BB4EFB882D4BA",
+  "code" : "require Geometry;
+
+dfgEntry {
+  this.incrementPositionsVersion();
+}
+"
+  }

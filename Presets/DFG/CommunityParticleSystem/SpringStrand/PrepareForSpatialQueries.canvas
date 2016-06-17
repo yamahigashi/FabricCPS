@@ -1,0 +1,42 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Builds an acceleration structure that will accelerate future queries such as :kl-ref:`SpatialQueryable.raycast` or\n:kl-ref:`SpatialQueryable.getClosest` . For built-in Geometry types, the default acceleration structure is the\n:kl-ref:`Octree`, however it is possible to use a :kl-ref:`SparseGrid` (see `options` parameter description).\nSee :ref:`spatialqueryaccelerationstructures` for more details about acceleration structures.\n\n**Important**: prepareForSpatialQueries must be called if geometry's structure or positions changed. Otherwise, the\nacceleration will be silently disabled.\n\n\nBecause building an acceleration structure incurs memory and computation overhead, this function should be called only when multiple queries are expected.\nThe acceleration structure will remain attached to the geometry so it can be reused and incrementally updated, unless\n:kl-ref:`SpatialQueryable.removeSpatialQueryAcceleration` is explicitly called.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  approximateNumberOfQueries: Size\n  options: GenericValueContainer\n"
+    },
+  "title" : "PrepareForSpatialQueries",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "approximateNumberOfQueries",
+      "execPortType" : "In",
+      "typeSpec" : "Size"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "options",
+      "execPortType" : "In",
+      "typeSpec" : "GenericValueContainer"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "AC60412EE51623DB4B004BC0AC3E9D0D",
+  "code" : "require Geometry;
+
+dfgEntry {
+  this.prepareForSpatialQueries(approximateNumberOfQueries, options);
+}
+"
+  }

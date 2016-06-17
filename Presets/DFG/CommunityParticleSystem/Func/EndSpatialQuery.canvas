@@ -1,0 +1,36 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Releases (recycles) a query object previously obtained by a call to :kl-ref:`SpatialQueryable.beginSpatialQuery` .\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  query: Ref<SpatialQuery>\n"
+    },
+  "title" : "EndSpatialQuery",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "query",
+      "execPortType" : "In",
+      "typeSpec" : "SpatialQuery"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "16DF3AB3FAA4B013EBF85B22FCB9D377",
+  "code" : "require Geometry;
+
+dfgEntry {
+  Ref<SpatialQuery> query_ref = query;
+  this.endSpatialQuery(query_ref);
+}
+"
+  }

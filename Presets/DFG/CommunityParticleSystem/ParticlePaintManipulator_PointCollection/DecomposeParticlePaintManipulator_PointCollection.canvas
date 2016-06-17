@@ -1,0 +1,66 @@
+// Created by kl2dfg (processDecomposeFunction)
+{
+  "objectType" : "Func",
+  "title" : "ParticlePaintManipulator_PointCollection ->",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "value",
+      "execPortType" : "In",
+      "typeSpec" : "ParticlePaintManipulator_PointCollection"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "points",
+      "execPortType" : "Out",
+      "typeSpec" : "Points"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "ray",
+      "execPortType" : "Out",
+      "typeSpec" : "Ray"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "pointIds",
+      "execPortType" : "Out",
+      "typeSpec" : "Integer[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "distances",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "weights",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[]"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "CC8C87DF44B91E755847AE019597DFC6",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  points = value.points;
+  ray = value.ray;
+  pointIds = value.pointIds;
+  distances = value.distances;
+  weights = value.weights;
+}
+"
+  }

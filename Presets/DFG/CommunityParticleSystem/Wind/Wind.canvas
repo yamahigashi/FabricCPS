@@ -1,0 +1,52 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  env: Ref<SimEnvironmentInfo>\n  d: Vec3\n  p: Scalar\n  result: Wind\n"
+    },
+  "title" : "Wind",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "env",
+      "execPortType" : "In",
+      "typeSpec" : "SimEnvironmentInfo"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "d",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "p",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Wind"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "36ED2AFBB1E6C5CF548E730B0CC1455A",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  Ref<SimEnvironmentInfo> env_ref = env;
+  result = Wind(env_ref, d, p);
+}
+"
+  }

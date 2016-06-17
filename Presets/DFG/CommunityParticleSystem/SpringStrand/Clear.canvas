@@ -1,0 +1,28 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Clears all data, including points and attributes. Version will be incremented.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n"
+    },
+  "title" : "Clear",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "5B2647F0C0494CA3EA420D63191C53D8",
+  "code" : "require Geometry;
+
+dfgEntry {
+  this.clear();
+}
+"
+  }

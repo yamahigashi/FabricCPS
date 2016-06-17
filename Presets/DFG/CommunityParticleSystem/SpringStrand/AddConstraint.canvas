@@ -1,0 +1,41 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver, ParticleSystem\n  i: Index\n  cons: ParticleConstraint\n"
+    },
+  "title" : "AddConstraint",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "i",
+      "execPortType" : "In",
+      "typeSpec" : "Index"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "cons",
+      "execPortType" : "In",
+      "typeSpec" : "ParticleConstraint"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "02BA933A011E9593D723E335627C76AD",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.addConstraint(i, cons);
+}
+"
+  }

@@ -1,0 +1,147 @@
+require ParticleSystem;
+require Math;
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+object DragResilienceForce: IForce, Force {
+    SimEnvironmentInfo env;
+
+    Index   strandStartEnd[][2];    // strand base vec, FIXME more memory efficient structure
+    Float32 segmentRatio[];         // segment ratio on a strand
+    Float32 strength;
+
+    Ref<SpringStrandSolver> callee;
+    Ref<ScalarAttribute> resilience;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+function DragResilienceForce(
+                Ref<SimEnvironmentInfo> env,
+                in SpringStrandSolver callee
+            ){
+
+    this.env      = env;
+    this.strength = 0.7;
+    this.callee   = callee;
+
+    // calc strand start end
+    this.strandStartEnd.resize( this.callee.size() );
+    if(GPU_ENABLE){
+        this.strandStartEnd.convertToSVM();
+    }
+    for (Index i=0; i < callee.innerIndices.size(); i++ ){
+        Index lastIndex = callee.innerIndices[i].size() -1;
+
+        for (Index j=0; j < callee.innerIndices[i].size(); j++){
+            Index a = callee.innerIndices[i][j];
+            this.strandStartEnd[a][0] = callee.innerIndices[i][0];
+            this.strandStartEnd[a][1] = callee.innerIndices[i][lastIndex];
+        }
+    }
+
+    Ref<GeometryAttributes> attributes = callee.getAttributes();
+    this.resilience = attributes.getOrCreateScalarAttribute( "resilience" );
+    if(GPU_ENABLE){
+        this.resilience.convertToSVM();
+        this.resilience.values.convertToSVM();
+    }
+}
+
+
+function DragResilienceForce(
+                Ref<SimEnvironmentInfo> env,
+                in SpringStrandSolver   callee,
+                in Float32              power
+            ){
+
+    this.env      = env;
+    this.callee   = callee;
+    this.strength = power;
+
+    // calc strand start end
+    this.strandStartEnd.resize( this.callee.size() );
+    if(GPU_ENABLE){
+        this.strandStartEnd.convertToSVM();
+    }
+    for (Index i=0; i < callee.innerIndices.size(); i++ ){
+        Index lastIndex = callee.innerIndices[i].size() -1;
+
+        for (Index j=0; j < callee.innerIndices[i].size(); j++){
+            Index a = callee.innerIndices[i][j];
+            this.strandStartEnd[a][0] = callee.innerIndices[i][0];
+            this.strandStartEnd[a][1] = callee.innerIndices[i][lastIndex];
+        }
+    }
+
+    Ref<GeometryAttributes> attributes = callee.getAttributes();
+    this.resilience = attributes.getOrCreateScalarAttribute( "resilience" );
+    if(GPU_ENABLE){
+        this.resilience.convertToSVM();
+        this.resilience.values.convertToSVM();
+    }
+}
+
+
+function Vec3[] DragResilienceForce.Apply( in Vec3Attribute pos ){
+    Vec3 res[];
+    res.resize( pos.size() );
+
+    ApplyDragResilienceForce<<< pos.size()@false>>>(
+            res, pos.values, this.callee.lastPos, this.strandStartEnd, this.resilience, this.strength);
+
+    return res;
+}
+
+function Vec3[] DragResilienceForce.Apply( in Vec3 pos[] ){
+    Vec3 res[];
+    res.convertToSVM();
+    res.resize( pos.size() );
+
+    ApplyDragResilienceForce_GPU<<< pos.size()@GPU_ENABLE >>>(
+        res, pos, this.callee.lastPos, this.strandStartEnd, this.resilience.values, this.strength );
+
+    return res;
+}
+
+operator ApplyDragResilienceForce<<< index >>>(
+                            io Vec3 res[],
+                            in Vec3 pos[],
+                            in Vec3 lastPos[],
+                            in Index strandStartEnd[][2],
+                            in ScalarAttribute resilience,
+                            in Float32 strength
+                        ){
+
+    // get segment vector
+    Vec3 seg = pos[ strandStartEnd[index][0] ] - pos[ strandStartEnd[index][1] ];
+    seg.normalize();
+
+    // vector projection, get the velocity perpendicular to this segment
+    Vec3 vel = lastPos[index] - pos[index];
+    Vec3 proj = vel.dot( seg ) * seg;
+
+    res[ index ] = resilience.values[index] * (vel - proj) * strength;
+}
+
+
+operator ApplyDragResilienceForce_GPU<<< index >>>(
+                            io Vec3 res[],
+                            in Vec3 pos[],
+                            in Vec3 lastPos[],
+                            in Index strandStartEnd[][2],
+                            in Scalar resilience[],
+                            in Float32 strength,
+                        ){
+
+    // get segment vector
+    Vec3 seg = pos[ strandStartEnd[index][0] ] - pos[ strandStartEnd[index][1] ];
+    seg.normalize();
+
+    // vector projection, get the velocity perpendicular to this segment
+    Vec3 vel = lastPos[index] - pos[index];
+    Vec3 proj = vel.dot( seg ) * seg;
+
+    res[ index ] = resilience[index] * (vel - proj) * strength;
+}

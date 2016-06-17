@@ -1,0 +1,41 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Invoked by the ParticlePaintManipulator during painting for each mouse move event.\nthe collectedPoints struct contains the points, distances and weights\nof the points in the geometry that are within the volume of the paint brush.\n\nSupported types:\n  this: IParticlePaintManipulator, ParticlePaintManipulator, ParticleAttributePaintManipulator, ParticleManipulator\n  mouseEvent: MouseEvent\n  collectedPoints: ParticlePaintManipulator_PointCollection\n"
+    },
+  "title" : "OnPaint",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "mouseEvent",
+      "execPortType" : "IO",
+      "typeSpec" : "MouseEvent"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "collectedPoints",
+      "execPortType" : "In",
+      "typeSpec" : "ParticlePaintManipulator_PointCollection"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "AA1AF8806DEEB56E80FF45DC2E9F8D7E",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.onPaint(mouseEvent, collectedPoints);
+}
+"
+  }

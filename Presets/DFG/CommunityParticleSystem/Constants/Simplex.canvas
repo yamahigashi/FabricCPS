@@ -1,0 +1,24 @@
+// Created by kl2dfg (processConstant)
+{
+  "objectType" : "Func",
+  "title" : "Simplex",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "value",
+      "execPortType" : "Out",
+      "typeSpec" : "Integer"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "109065B4E8BD021FD9CCB96306C58B6B",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  value = simplex;
+}
+"
+  }

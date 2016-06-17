@@ -1,0 +1,44 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "for shortcut\n\nSupported types:\n  skeleton: Skeleton\n  index: Index\n  result: Xfo\n"
+    },
+  "title" : "GetReferenceLocalPose",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "skeleton",
+      "execPortType" : "IO",
+      "typeSpec" : "Skeleton"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "index",
+      "execPortType" : "In",
+      "typeSpec" : "Index"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "D1BCA1ECCE0115AFE491FD59FC1EB7E5",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  result = getReferenceLocalPose(skeleton, index);
+}
+"
+  }

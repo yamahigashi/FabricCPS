@@ -1,0 +1,45 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Sized points' GeometryLocation can encode a spherical coordinate relative to their bounding sphere.\nFor a sized point, returns a vector corresponding to point sphere's local coordinate, otherwise, returns Vec3(0,0,0).\nIt returns a vector of unit length corresponding to the surface a sphere of radius 1, such that the actual position can be computed as:\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  location: GeometryLocation\n  result: Vec3\n"
+    },
+  "title" : "GetLocationBoundingSphereCoordinate",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "location",
+      "execPortType" : "In",
+      "typeSpec" : "GeometryLocation"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        },
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "521A02F18A0E4FD6350B454F9B15343A",
+  "code" : "require Geometry;
+
+dfgEntry {
+  result = this.getLocationBoundingSphereCoordinate(location);
+}
+"
+  }

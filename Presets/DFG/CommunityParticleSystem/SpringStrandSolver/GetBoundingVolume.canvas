@@ -1,0 +1,35 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Returns the bounding volume of the geometry, as computed from the positions attribute.\nThis function will cache the bounding box given a specific version of the positions attribute,\nand will update it lazily, in a thread-safe fashion. The internal cache is stored in the\nBaseGeometry.metaData container.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  result: LocalBoundingVolume\n"
+    },
+  "title" : "GetBoundingVolume",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "LocalBoundingVolume"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "9DBEC8472B73CFF7FE979A1E0E3616E9",
+  "code" : "require Geometry;
+
+dfgEntry {
+  result = this.getBoundingVolume();
+}
+"
+  }

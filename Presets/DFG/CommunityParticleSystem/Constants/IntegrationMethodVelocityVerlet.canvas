@@ -1,0 +1,24 @@
+// Created by kl2dfg (processConstant)
+{
+  "objectType" : "Func",
+  "title" : "IntegrationMethodVelocityVerlet",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "value",
+      "execPortType" : "Out",
+      "typeSpec" : "Index"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "C82C9738DD48767823C59F8121E999D6",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  value = IntegrationMethodVelocityVerlet;
+}
+"
+  }

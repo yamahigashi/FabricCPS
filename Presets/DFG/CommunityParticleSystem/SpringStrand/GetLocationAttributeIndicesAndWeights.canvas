@@ -1,0 +1,49 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "For a GeometryLocation returned by this SpatialQueryable, returns the attribute indices and weights\nrequired to linearly interpolate attribute values. The GeometryLocation must be valid.\nSee :ref:`geometrylocationstructure` for more details.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  location: GeometryLocation\n  attributeIndices: LocalL16UInt32Array\n  weights: LocalL16ScalarArray\n"
+    },
+  "title" : "GetLocationAttributeIndicesAndWeights",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "location",
+      "execPortType" : "In",
+      "typeSpec" : "GeometryLocation"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "attributeIndices",
+      "execPortType" : "IO",
+      "typeSpec" : "LocalL16UInt32Array"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "weights",
+      "execPortType" : "IO",
+      "typeSpec" : "LocalL16ScalarArray"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "21DC327125A144906954DB096E326F7D",
+  "code" : "require Geometry;
+
+dfgEntry {
+  this.getLocationAttributeIndicesAndWeights(location, attributeIndices, weights);
+}
+"
+  }

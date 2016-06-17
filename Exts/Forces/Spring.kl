@@ -1,0 +1,69 @@
+require ParticleSystem;
+require Math;
+
+
+
+object Spring: IForce, Force {
+    Vec3    basePose<>;
+    //Float32 damping;
+    Ref<ScalarAttribute> stiff;
+    Ref<SpringStrandSolver> callee;
+
+    Float32 power;
+};
+
+function Spring( Ref<SimEnvironmentInfo> env, in Vec3 basePose[], in SpringStrandSolver callee ){
+    this.initialize( env, basePose, callee, 1.0f );
+}
+
+function Spring( Ref<SimEnvironmentInfo> env, in Vec3 basePose[], in SpringStrandSolver callee, in Float32 pow ){
+    this.initialize( env, basePose, callee, pow );
+}
+
+
+/// \internal
+private function Spring.initialize!( Ref<SimEnvironmentInfo> env, in Vec3 basePose[], in SpringStrandSolver callee, in Float32 pow ){
+    this.env = env;
+    this.basePose = basePose;
+    //this.damping  = 0.005;
+    this.callee   = callee;
+    this.power = pow;
+
+    Ref<GeometryAttributes> attributes = callee.getAttributes();
+    this.stiff = attributes.getOrCreateScalarAttribute( "stiffness" );
+    if(GPU_ENABLE){
+        this.stiff.convertToSVM();
+        this.stiff.values.convertToSVM();
+    }
+    for( Index i=0; i < callee.size(); i ++ ){
+        this.stiff.values[i] = 3;
+    }
+}
+
+
+/// \dfgPresetOmit
+function Vec3[] Spring.Apply( in Vec3Attribute pos ){
+    Vec3 res[];
+    res.resize( pos.size() );
+
+    ApplySpringForce<<< pos.size()@false >>>( res, pos, this.basePose, this.stiff, this.power );
+    return res;
+}
+
+/// \dfgPresetOmit
+function Vec3[] Spring.Apply( in Vec3 pos[] ){
+    Vec3 res[];
+    //res.convertToGPU();
+    res.resize( pos.size() );
+    //this.stiff.convertToGPU();
+
+    ApplySpringForce_GPU<<< pos.size()@GPU_ENABLE >>>( res, pos, this.basePose, this.stiff.values, this.power );
+    return res;
+}
+
+operator ApplySpringForce<<< index >>>( io Vec3 res[], in Vec3Attribute now, in Vec3 base<>, in ScalarAttribute stiff, in Float32 pow ){
+    res[index] = ( now.values[index] - base[index] ) * stiff.values[index] * pow;
+}
+operator ApplySpringForce_GPU<<< index >>>( io Vec3 res[], in Vec3 now[], in Vec3 base<>, in Scalar stiff[], in Float32 pow ){
+    res[index] = ( base[index] - now[index] ) * stiff[index] * pow;
+}

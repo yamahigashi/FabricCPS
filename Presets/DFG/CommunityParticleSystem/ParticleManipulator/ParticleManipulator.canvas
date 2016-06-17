@@ -1,0 +1,51 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  context: EvalContext\n  particleSystem: ParticleSystem\n  handle: DrawingHandle\n  result: ParticleManipulator\n"
+    },
+  "title" : "ParticleManipulator",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "context",
+      "execPortType" : "In",
+      "typeSpec" : "EvalContext"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "nodePortType" : "Out",
+      "name" : "particleSystem",
+      "execPortType" : "In",
+      "typeSpec" : "ParticleSystem"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "handle",
+      "execPortType" : "In",
+      "typeSpec" : "DrawingHandle"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "ParticleManipulator"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "002A214499A5F41A3880F8156953F9DB",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  result = ParticleManipulator(context, particleSystem, handle);
+}
+"
+  }

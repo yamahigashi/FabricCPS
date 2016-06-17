@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Invoked by the ParticlePaintManipulator when the paint stroke begins.\nThe event passed in is the mouse down event.\n\nSupported types:\n  this: IParticlePaintManipulator, ParticlePaintManipulator, ParticleAttributePaintManipulator, ParticleManipulator\n  mouseEvent: MouseEvent\n"
+    },
+  "title" : "OnStrokeBegin",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "mouseEvent",
+      "execPortType" : "IO",
+      "typeSpec" : "MouseEvent"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "5B255EF606220EFED2F77B1A059EFC1E",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.onStrokeBegin(mouseEvent);
+}
+"
+  }

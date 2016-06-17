@@ -1,0 +1,34 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Merges the current stroke data with the existing data collected over the\ncourse of the paint stroke.\n\nSupported types:\n  this: ParticleAttributePaintCommand\n  paintData: ParticleAttributePaintManipulator_PaintData\n"
+    },
+  "title" : "AddPaintData",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "ParticleAttributePaintCommand"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "paintData",
+      "execPortType" : "In",
+      "typeSpec" : "ParticleAttributePaintManipulator_PaintData"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "07A981C8D90E77CBB96FF00E3B8A7E11",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.addPaintData(paintData);
+}
+"
+  }

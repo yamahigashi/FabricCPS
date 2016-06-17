@@ -1,0 +1,28 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Releases the cached acceleration structure created by :kl-ref:`SpatialQueryable.prepareForSpatialQueries`, which will\nreduce memory usage. However, if future queries are expected for the same geometry (even if modified), calling this\nmethod can significatively reduce the performance, as the next :kl-ref:`SpatialQueryable.prepareForSpatialQueries`\nwill need to fully fully reallocate and rebuild on acceleration structure (prevents potential incremental updates).\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n"
+    },
+  "title" : "RemoveSpatialQueryAcceleration",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "35B6D137F7BB94461ED8C33FF2C49120",
+  "code" : "require Geometry;
+
+dfgEntry {
+  this.removeSpatialQueryAcceleration();
+}
+"
+  }

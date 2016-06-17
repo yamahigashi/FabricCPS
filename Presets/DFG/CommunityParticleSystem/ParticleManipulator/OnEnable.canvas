@@ -1,0 +1,27 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "When the manipulator is enabled, this callback function is invoked.\n\nSupported types:\n  this: ParticlePaintManipulator, ParticleAttributePaintManipulator, ParticleManipulator\n"
+    },
+  "title" : "OnEnable",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "IO",
+      "name" : "this",
+      "execPortType" : "IO",
+      "typeSpec" : "$TYPE$"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "0E8C0064F86AB0B65C0F29B95AB065A1",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  this.onEnable();
+}
+"
+  }

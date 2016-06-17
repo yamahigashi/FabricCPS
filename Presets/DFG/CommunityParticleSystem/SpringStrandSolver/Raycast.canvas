@@ -1,0 +1,63 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.1.0-auto-2016022600/HTML/KLExtensionsGuide/Geometry/Points.html",
+    "uiTooltip" : "Raycasts the Points geometry, taking into account the point sizes if applicable (see :ref:`pointsizes`).\nSee :kl-ref:`SpatialQueryable.raycast` for more details about this function and parameters.\n\nSupported types:\n  this: SimpleParticleSolver, SpringStrand, SpringStrandSolver\n  ray: Ray\n  doubleSided: Boolean\n  coneThreshold: Scalar\n  maxDistance: Scalar\n  result: GeometryLocation\n"
+    },
+  "title" : "Raycast",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "ray",
+      "execPortType" : "In",
+      "typeSpec" : "Ray"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "doubleSided",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "coneThreshold",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "maxDistance",
+      "execPortType" : "In",
+      "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "GeometryLocation"
+      }
+    ],
+  "extDeps" : {
+    "Geometry" : "*"
+    },
+  "presetGUID" : "BF11F149E8F336D43D6A32CD70B9BA50",
+  "code" : "require Geometry;
+
+dfgEntry {
+  result = this.raycast(ray, doubleSided, coneThreshold, maxDistance);
+}
+"
+  }

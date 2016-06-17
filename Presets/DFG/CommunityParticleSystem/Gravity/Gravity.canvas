@@ -1,0 +1,42 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  env: Ref<SimEnvironmentInfo>\n  g_: Vec3\n  result: Gravity\n"
+    },
+  "title" : "Gravity",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "env",
+      "execPortType" : "In",
+      "typeSpec" : "SimEnvironmentInfo"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "g",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out",
+      "typeSpec" : "Gravity"
+      }
+    ],
+  "extDeps" : {
+    "ParticleSystem" : "*"
+    },
+  "presetGUID" : "D2C2F20A0C7A86037D99A03F7F00B069",
+  "code" : "require ParticleSystem;
+
+dfgEntry {
+  Ref<SimEnvironmentInfo> env_ref = env;
+  result = Gravity(env_ref, g);
+}
+"
+  }
