@@ -146,37 +146,36 @@ function SpringStrandSolver.initialize!(
 function KrakenSolverArg[] SpringStrandSolver.getArguments(){
 
     KrakenSolverArg args[];
-    args.push(KrakenSolverArg('drawDebug',        'in',  'Boolean'));
-    args.push(KrakenSolverArg('rigScale',         'in',  'Scalar'));
+    args.push(KrakenSolverArg('drawDebug',        'In',  'Boolean'));
+    args.push(KrakenSolverArg('rigScale',         'In',  'Scalar'));
 
-    args.push(KrakenSolverArg('time',             'in',  'Scalar'));
-    args.push(KrakenSolverArg('ikblend',          'in',  'Scalar'));
-    //args.push(KrakenSolverArg('simulationWeight', 'in',  'Scalar'));
-    args.push(KrakenSolverArg('chainBase',        'in',  'Mat44[]'));
-    args.push(KrakenSolverArg('ikgoal',           'in',  'Mat44[]'));
-    args.push(KrakenSolverArg('fkcontrols',       'in',  'Mat44[]'));
-    args.push(KrakenSolverArg('tipBoneLen',       'in',  'Scalar'));
+    args.push(KrakenSolverArg('time',             'In',  'Scalar'));
+    args.push(KrakenSolverArg('ikblend',          'In',  'Scalar'));
+    //args.push(KrakenSolverArg('simulationWeight', 'In',  'Scalar'));
+    args.push(KrakenSolverArg('ikgoal',           'In',  'Mat44[]'));
+    args.push(KrakenSolverArg('fkcontrols',       'In',  'Mat44[]'));
+    args.push(KrakenSolverArg('tipBoneLen',       'In',  'Scalar'));
 
-    args.push(KrakenSolverArg('pose',             'out', 'Mat44[]'));
-    args.push(KrakenSolverArg('strandEnd',        'out', 'Mat44[]'));
+    args.push(KrakenSolverArg('pose',             'Out', 'Mat44[]'));
+    args.push(KrakenSolverArg('strandEnd',        'Out', 'Mat44[]'));
 
     return args;
 }
 
 function SpringStrandSolver.solve!(
-                        in  Boolean drawDebug,
-                        in  Scalar  rigScale,
+        in  Boolean drawDebug,
+        in  Scalar  rigScale,
 
-                        in  Scalar time,
-                        in  Scalar ikblend,
-                        //in  Scalar simulationWeight,
-                        in  Mat44  chainBase[],
-                        in  Mat44  ikgoal[],
-                        in  Mat44  fkcontrols[],
-                        in  Scalar tipBoneLen,
+        in  Scalar time,
+        in  Scalar ikblend,
+        //in  Scalar simulationWeight,
+        in  Mat44  ikgoal[],
+        in  Mat44  fkcontrols[],
+        in  Scalar tipBoneLen,
 
-                        io  Mat44  pose[],
-                        io  Mat44  strandEnd[]  ){
+        io  Mat44  pose[],
+        io  Mat44  strandEnd[]
+) {
 
     if ( !this.IsReady() ){
         this.initialize( fkcontrols, ikgoal );
@@ -203,8 +202,10 @@ function SpringStrandSolver.solve!(
     if ( this.env.isStartFrame() ) {
         this.ResetToReferencePose();
         // TODO: later
+
     } else if(  dt <= 0.0 ){
         // pass
+
     } else {
         if ( this.integrateMethod ==  0 ){
             this.solveBasicVerlet( dt );
